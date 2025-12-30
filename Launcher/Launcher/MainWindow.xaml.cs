@@ -29,8 +29,6 @@ namespace Launcher
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            Injector.LaunchSteam("", "");
-            /*
             var gamePath = Settings.Instance.GameExecutablePath;
             if (string.IsNullOrWhiteSpace(gamePath))
             {
@@ -42,7 +40,7 @@ namespace Launcher
                 MessageBox.Show("Can't find game executable.");
                 return;
             }
-            Injector.Launch(gamePath, "", "");*/
+            Injector.LaunchAuto(gamePath, "");
         }
 
         private void GameExePathBox_TextChanged(object sender, TextChangedEventArgs e)
