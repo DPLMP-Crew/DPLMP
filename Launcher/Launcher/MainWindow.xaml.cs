@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace Launcher
 {
@@ -22,7 +23,36 @@ namespace Launcher
     {
         public MainWindow()
         {
+            new Settings();
             InitializeComponent();
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            Injector.LaunchSteam("", "");
+            /*
+            var gamePath = Settings.Instance.GameExecutablePath;
+            if (string.IsNullOrWhiteSpace(gamePath))
+            {
+                MessageBox.Show("Please locate your game executable path.");
+                return;
+            }
+            if (!File.Exists(gamePath))
+            {
+                MessageBox.Show("Can't find game executable.");
+                return;
+            }
+            Injector.Launch(gamePath, "", "");*/
+        }
+
+        private void GameExePathBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Settings.Instance.GameExecutablePath = GameExePathBox.Text;
+        }
+
+        private void PlayerNameBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Settings.Instance.PlayerName = PlayerNameBox.Text;
         }
     }
 }

@@ -13,7 +13,7 @@
                     <RowDefinition Height="90*"/>
                     <RowDefinition Height="17*"/>
                 </Grid.RowDefinitions>
-                <Button x:Name="PlayButton" Content="PLAY" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" Width="166" IsDefault="True" Grid.Row="1"/>
+                <Button x:Name="PlayButton" Content="PLAY" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" Width="166" IsDefault="True" Grid.Row="1" Click="PlayButton_Click"/>
             </Grid>
         </TabItem>
         <TabItem x:Name="DirectTab" HorizontalAlignment="Center" Header="Direct Connect" VerticalAlignment="Top" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
@@ -48,12 +48,12 @@
                 <StackPanel>
                     <Grid Height="34">
                         <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Game Executable Path:" VerticalAlignment="Center"/>
-                        <TextBox HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237"/>
+                        <TextBox x:Name="GameExePathBox" HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237" TextChanged="GameExePathBox_TextChanged"/>
                         <Button Content="Browse" HorizontalAlignment="Left" Margin="378,0,0,0" VerticalAlignment="Center" Width="80"/>
                     </Grid>
                     <Grid Height="34">
                         <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Player Name" VerticalAlignment="Center"/>
-                        <TextBox HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237" Text="Unnamed"/>
+                        <TextBox x:Name="PlayerNameBox" HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237" Text="Unnamed" TextChanged="PlayerNameBox_TextChanged"/>
                     </Grid>
                 </StackPanel>
             </Grid>
