@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="DPLMP Launcher" Height="472" Width="762">
     <TabControl>
-        <TabItem x:Name="MainTab" Header="Main">
+        <TabItem x:Name="MainTab" Header="Browser" Margin="0,0,0,0">
             <Grid Background="#FFE5E5E5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="90*"/>
@@ -16,8 +16,51 @@
                 <Button x:Name="PlayButton" Content="PLAY" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" Width="166" IsDefault="True" Grid.Row="1"/>
             </Grid>
         </TabItem>
-        <TabItem x:Name="SettingsTab" Header="Settings">
-            <Grid Background="#FFE5E5E5"/>
+        <TabItem x:Name="DirectTab" HorizontalAlignment="Center" Header="Direct Connect" VerticalAlignment="Top" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
+            <TabItem.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TabItem.RenderTransform>
+            <Grid Background="#FFE5E5E5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90*"/>
+                    <RowDefinition Height="17*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.RowSpan="2">
+                    <Grid Height="34">
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Address" VerticalAlignment="Center"/>
+                        <TextBox HorizontalAlignment="Left" Margin="71,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237"/>
+                    </Grid>
+                    <Grid Height="34">
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Port" VerticalAlignment="Center"/>
+                        <TextBox HorizontalAlignment="Left" Margin="71,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="99"/>
+                    </Grid>
+                </StackPanel>
+                <Button x:Name="DirectPlayButton" Content="PLAY" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" Width="166" IsDefault="True" Grid.Row="1"/>
+            </Grid>
+        </TabItem>
+        <TabItem x:Name="SettingsTab" Header="Settings" Margin="0,0,0,0">
+            <Grid Background="#FFE5E5E5">
+                <StackPanel>
+                    <Grid Height="34">
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Game Executable Path" VerticalAlignment="Center"/>
+                        <TextBox HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237"/>
+                        <Button Content="Browse" HorizontalAlignment="Left" Margin="378,0,0,0" VerticalAlignment="Center" Width="80"/>
+                    </Grid>
+                    <Grid Height="34">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="164*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Player Name" VerticalAlignment="Center"/>
+                        <TextBox HorizontalAlignment="Left" Margin="35,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237" Text="Unnamed" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
         </TabItem>
     </TabControl>
 </Window>
