@@ -32,12 +32,12 @@
                 </Grid.RowDefinitions>
                 <StackPanel Grid.RowSpan="2">
                     <Grid Height="34">
-                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Address" VerticalAlignment="Center"/>
-                        <TextBox HorizontalAlignment="Left" Margin="71,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Address:" VerticalAlignment="Center"/>
+                        <TextBox HorizontalAlignment="Left" Margin="71,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237" Text="127.0.0.1"/>
                     </Grid>
                     <Grid Height="34">
-                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Port" VerticalAlignment="Center"/>
-                        <TextBox HorizontalAlignment="Left" Margin="71,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="99"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Port:" VerticalAlignment="Center"/>
+                        <TextBox HorizontalAlignment="Left" Margin="71,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="99" Text="7126"/>
                     </Grid>
                 </StackPanel>
                 <Button x:Name="DirectPlayButton" Content="PLAY" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" Width="166" IsDefault="True" Grid.Row="1"/>
@@ -47,17 +47,13 @@
             <Grid Background="#FFE5E5E5">
                 <StackPanel>
                     <Grid Height="34">
-                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Game Executable Path" VerticalAlignment="Center"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Game Executable Path:" VerticalAlignment="Center"/>
                         <TextBox HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237"/>
                         <Button Content="Browse" HorizontalAlignment="Left" Margin="378,0,0,0" VerticalAlignment="Center" Width="80"/>
                     </Grid>
                     <Grid Height="34">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="164*"/>
-                        </Grid.ColumnDefinitions>
                         <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Player Name" VerticalAlignment="Center"/>
-                        <TextBox HorizontalAlignment="Left" Margin="35,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237" Text="Unnamed" Grid.Column="1"/>
+                        <TextBox HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="237" Text="Unnamed"/>
                     </Grid>
                 </StackPanel>
             </Grid>
