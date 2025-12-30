@@ -54,7 +54,7 @@ namespace Launcher
         {
             var procHandle = Kernel.OpenProcess(ProcessAccessFlags.All, false, procId);
             Console.WriteLine(procHandle.ToInt32().ToString());
-            var libraryPath = Path.Combine(Environment.CurrentDirectory, Constants.HookLibraryName);
+            var libraryPath = Path.Combine(AppContext.BaseDirectory, Constants.HookLibraryName);
             var libraryBytes = Encoding.ASCII.GetBytes(libraryPath + "\0");
             var libraryBytesSize = (IntPtr)libraryBytes.Length;
             var libraryMem = Kernel.VirtualAllocEx(procHandle, IntPtr.Zero, libraryBytesSize, AllocationType.Reserve | AllocationType.Commit, MemoryProtection.ReadWrite);
@@ -79,14 +79,6 @@ namespace Launcher
             Kernel.CloseHandle(remoteThreadHandle);
 
             Kernel.CloseHandle(procHandle);
-        }
-
-        private static ProcessThread GetMainThread(Process process)
-        {
-            return process.Threads
-                          .Cast<ProcessThread>()
-                          .OrderBy(t => t.StartTime)
-                          .First();
         }
 
         private static string ByteArrayToString(byte[] arr)
@@ -153,7 +145,7 @@ namespace Launcher
             var saThread = new SECURITY_ATTRIBUTES();
             saThread.nLength = Marshal.SizeOf<SECURITY_ATTRIBUTES>();
 
-            var result = Kernel.CreateProcess(executable, commandLine, ref saProc, ref saThread, false, (uint)ProcessCreationFlags.CreateSuspended, IntPtr.Zero, null, ref si, out var pi);
+            var result = Kernel.CreateProcess(executable, commandLine, ref saProc, ref saThread, false, (uint)ProcessCreationFlags.CreateSuspended, IntPtr.Zero, Path.GetDirectoryName(executable), ref si, out var pi);
             Inject(pi.dwProcessId);
             Kernel.ResumeThread(pi.hThread);
 
