@@ -48,8 +48,8 @@
                 <StackPanel>
                     <Grid Height="34">
                         <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Game Executable Path:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="GameExePathBox" HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="526" TextChanged="GameExePathBox_TextChanged"/>
-                        <Button Content="Browse" HorizontalAlignment="Left" Margin="666,0,0,0" VerticalAlignment="Center" Width="80"/>
+                        <TextBox x:Name="GameExePathBox" HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="497" TextChanged="GameExePathBox_TextChanged"/>
+                        <Button Content="Browse" HorizontalAlignment="Left" Margin="637,0,0,0" VerticalAlignment="Center" Width="80"/>
                     </Grid>
                     <Grid Height="34">
                         <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Player Name" VerticalAlignment="Center"/>
