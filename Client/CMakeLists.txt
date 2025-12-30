@@ -1,5 +1,11 @@
 add_library(DPLMPClient SHARED)
 
+target_compile_definitions(DPLMPClient
+    PRIVATE
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+)
+
 target_sources(DPLMPClient
     PRIVATE
         src/dllmain.cpp
