@@ -1,0 +1,23 @@
+﻿<Window x:Class="Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Launcher"
+        mc:Ignorable="d"
+        Title="DPLMP Launcher" Height="472" Width="762">
+    <TabControl>
+        <TabItem x:Name="MainTab" Header="Main">
+            <Grid Background="#FFE5E5E5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90*"/>
+                    <RowDefinition Height="17*"/>
+                </Grid.RowDefinitions>
+                <Button x:Name="PlayButton" Content="PLAY" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" Width="166" IsDefault="True" Grid.Row="1"/>
+            </Grid>
+        </TabItem>
+        <TabItem x:Name="SettingsTab" Header="Settings">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+    </TabControl>
+</Window>
