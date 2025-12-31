@@ -21,10 +21,20 @@ namespace Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Settings _settings;
+
         public MainWindow()
         {
-            new Settings();
             InitializeComponent();
+            _settings = new Settings();
+            _settings.Load();
+            ApplySettings();
+        }
+
+        private void ApplySettings()
+        {
+            GameExePathBox.Text = _settings.GameExecutablePath;
+            PlayerNameBox.Text = _settings.PlayerName;
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
@@ -45,12 +55,16 @@ namespace Launcher
 
         private void GameExePathBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (Settings.Instance == null) return;
             Settings.Instance.GameExecutablePath = GameExePathBox.Text;
+            Settings.Instance.Save();
         }
 
         private void PlayerNameBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (Settings.Instance == null) return;
             Settings.Instance.PlayerName = PlayerNameBox.Text;
+            Settings.Instance.Save();
         }
     }
 }
