@@ -11,8 +11,8 @@ namespace Core {
 	}
 
 	void Initialize() {
-		// Purpose: Steam EXE gets decompressed on boot, so hooking before this crashes the game.
-		// TODO - Maybe wait for another DLL to load, like dinput8 instead of this check?
+		// Purpose: Steam EXE gets unpacked on boot, so hooking before this crashes the game.
+		// TODO - Find a better way to do this.
 		uint8_t sig[] = { 0x8B, 0x41, 0x20, 0xC3 };
 		while (memcmp((void*)0x46746d, sig, sizeof(sig)) != 0)
 		{
