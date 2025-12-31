@@ -1,5 +1,12 @@
 #include <Windows.h>
 #include <iostream>
+#include "Core.h"
+
+static DWORD WINAPI CoreThread(LPVOID param)
+{
+    Core::Initialize();
+    return 0;
+}
 
 BOOL WINAPI DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
@@ -14,7 +21,8 @@ BOOL WINAPI DllMain(HMODULE hModule,
         freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
         freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
         DisableThreadLibraryCalls(hModule);
-		printf("Hello :)\n");
+		printf("Initializing DPLMP Core.\n");
+        CreateThread(0, 0, CoreThread, hModule, 0, 0);
         break;
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
