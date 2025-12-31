@@ -3,7 +3,7 @@
 
 namespace Core {
 
-	SafetyHookInline getForcedLevelHook{};
+	static SafetyHookInline getForcedLevelHook{};
 
 	static int __stdcall GetForcedLevel_Hook()
 	{
