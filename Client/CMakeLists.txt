@@ -9,6 +9,7 @@ target_compile_definitions(DPLMPClient
 target_sources(DPLMPClient
     PRIVATE
         src/dllmain.cpp
+        src/Core.cpp
 )
 
 target_include_directories(DPLMPClient
