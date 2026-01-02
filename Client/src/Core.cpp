@@ -1,13 +1,16 @@
 #include "Core.h"
 #include <safetyhook.hpp>
 #include "dpl/CLifeEventDataManager.h"
+#include "dpl/SpoolableResourceManager.h"
+#include "dpl/CLoadingScreen.h"
 #include "scan.h"
 
 namespace Core {
 
 	static SafetyHookInline getForcedLevelHook{};
 	static SafetyHookInline nodeOnEnableHook{};
-	static SafetyHookInline lifeSystemInitialiseHook{};
+	static SafetyHookInline cStateGameRunningHook{};
+	static SafetyHookInline frameUpdateHook{};
 
 	static int __stdcall GetForcedLevel_Hook()
 	{
@@ -20,9 +23,23 @@ namespace Core {
 		return;
 	}
 
-	static void __fastcall LifeSystemInitialise_Hook(void* cLifeSystem) {
-		lifeSystemInitialiseHook.thiscall(cLifeSystem);
+	static void* __fastcall CStateGameRunning_Hook(void* cState) {
+		void* retVal = cStateGameRunningHook.thiscall<void*>(cState);
 		CLifeEventDataManager::GetInstance()->EndAllLifeEvents();
+		return retVal;
+	}
+
+	static void __fastcall FrameUpdate_Hook(void* me, void* _, void* unk1, void* unk2) {
+		frameUpdateHook.thiscall(me, unk1, unk2);
+		// Disable loading screen if nothing is being loaded.
+		SpoolableResourceManager* resManager = SpoolableResourceManager::GetInstance();
+		CLoadingScreen* loadingScreen = CLoadingScreen::GetInstance();
+		if (resManager != nullptr && loadingScreen != nullptr)
+		{
+			int spoolStatus = resManager->GetStatus();
+			if (spoolStatus != 0)
+				loadingScreen->Deactivate();
+		}
 	}
 
 	static void WaitForSteamUnpack() {
@@ -45,8 +62,9 @@ namespace Core {
 		getForcedLevelHook = safetyhook::create_inline(0x46746d, GetForcedLevel_Hook);
 		// Stub out CStatusControlNode::OnEnable to disable life events.
 		nodeOnEnableHook = safetyhook::create_inline(0x48719a, Stub_Hook);
-		// hook into CLifeSystem::Initialise to end all life events.
-		lifeSystemInitialiseHook = safetyhook::create_inline(0x471e82, LifeSystemInitialise_Hook);
-		// MakeJMP((BYTE*)0x004720bf, (DWORD)EnterInGameStateHook, 5);
+		// hook into Game Running state constructor to stop all life events.
+		cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
+		// Called every frame.
+		frameUpdateHook = safetyhook::create_inline(0x570f27, FrameUpdate_Hook);
 	}
 }

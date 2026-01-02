@@ -12,6 +12,8 @@ target_sources(DPLMPClient
         src/Core.cpp
 	    src/dpl/CLifeEventDataManager.cpp
         src/scan.cpp
+        src/dpl/SpoolableResourceManager.cpp
+        src/dpl/CLoadingScreen.cpp
 )
 
 target_include_directories(DPLMPClient
