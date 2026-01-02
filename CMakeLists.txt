@@ -11,12 +11,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(safetyhook)
 
-FetchContent_Declare(
-    RakNet
-    GIT_REPOSITORY "https://github.com/facebookarchive/RakNet.git"
-    GIT_TAG "origin/master"
-)
-FetchContent_MakeAvailable(RakNet)
+#FetchContent_Declare(
+#    RakNet
+#    GIT_REPOSITORY "https://github.com/facebookarchive/RakNet.git"
+#    GIT_TAG "origin/master"
+#)
+#FetchContent_MakeAvailable(RakNet)
 
 add_subdirectory(Client)
 # TODO
