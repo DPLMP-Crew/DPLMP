@@ -11,6 +11,7 @@ namespace Core {
 	static SafetyHookInline nodeOnEnableHook{};
 	static SafetyHookInline cStateGameRunningHook{};
 	static SafetyHookInline frameUpdateHook{};
+	static SafetyHookInline setGameSpeedMuliplierHook{};
 
 	static int __stdcall GetForcedLevel_Hook()
 	{
@@ -42,6 +43,10 @@ namespace Core {
 		}
 	}
 
+	static void __stdcall SetGameSpeedMultiplier_Hook(float speed) {
+		setGameSpeedMuliplierHook.stdcall(1.0f);
+	}
+
 	static void WaitForSteamUnpack() {
 		// Purpose: Steam EXE gets unpacked on boot, so hooking before this crashes the game or doesn't work.
 		// TODO - Find a better way to do this.
@@ -64,5 +69,7 @@ namespace Core {
 		cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
 		// Called every frame.
 		frameUpdateHook = safetyhook::create_inline(0x570f27, FrameUpdate_Hook);
+		// Lock timescale to full speed.
+		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
 	}
 }
