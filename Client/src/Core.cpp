@@ -45,10 +45,8 @@ namespace Core {
 	static void WaitForSteamUnpack() {
 		// Purpose: Steam EXE gets unpacked on boot, so hooking before this crashes the game or doesn't work.
 		// TODO - Find a better way to do this.
-		//uint8_t sig[] = { 0x8B, 0x41, 0x20, 0xC3 };
-		//while (memcmp((void*)0x46746d, sig, sizeof(sig)) != 0)
-		uint8_t sig[] = { 0x6A, 0x01, 0xFF, 0x71, 0x30 };
-		while (memcmp((void*)0x48719a, sig, sizeof(sig)) != 0)
+		uint8_t sig[] = { 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10 };
+		while (memcmp((void*)0x634fbd, sig, sizeof(sig)) != 0)
 		{
 			//Wait
 		}
