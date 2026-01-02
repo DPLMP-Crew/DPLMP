@@ -55,7 +55,7 @@ namespace Launcher
             var procHandle = Kernel.OpenProcess(ProcessAccessFlags.All, false, procId);
             Console.WriteLine(procHandle.ToInt32().ToString());
             var libraryPath = Path.Combine(AppContext.BaseDirectory, Constants.HookLibraryName);
-            var libraryBytes = Encoding.ASCII.GetBytes(libraryPath + "\0");
+            var libraryBytes = Encoding.Unicode.GetBytes(libraryPath + "\0");
             var libraryBytesSize = (IntPtr)libraryBytes.Length;
             var libraryMem = Kernel.VirtualAllocEx(procHandle, IntPtr.Zero, libraryBytesSize, AllocationType.Reserve | AllocationType.Commit, MemoryProtection.ReadWrite);
             Console.WriteLine($"Allocated {libraryMem.ToInt32()}");
@@ -64,7 +64,7 @@ namespace Launcher
                 Console.WriteLine("Wrote to allocation.");
             var kernel32Handle = Kernel.GetModuleHandle("Kernel32.dll");
             Console.WriteLine($"Found Kernel32 handle {kernel32Handle.ToInt32()}");
-            var loadLibraryAAddress = Kernel.GetProcAddress(kernel32Handle, "LoadLibraryA");
+            var loadLibraryAAddress = Kernel.GetProcAddress(kernel32Handle, "LoadLibraryW");
 
             var remoteThreadHandle = Kernel.CreateRemoteThread(procHandle, IntPtr.Zero, 0, loadLibraryAAddress, libraryMem, 0, IntPtr.Zero);
             Console.WriteLine($"Created remote thread {remoteThreadHandle.ToInt32()}");

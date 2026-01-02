@@ -4,6 +4,7 @@
 #include "dpl/SpoolableResourceManager.h"
 #include "dpl/CLoadingScreen.h"
 #include "scan.h"
+#include <shellapi.h>
 
 namespace Core {
 
@@ -86,6 +87,15 @@ namespace Core {
 	void Initialize() {
 		WaitForSteamUnpack();
 		printf("EXE unpacked, hooking.\n");
+		printf("Command line:\n");
+		int argCount = 0;
+		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &argCount);
+		if (args) {
+			for (int i = 0; i < argCount; i++) {
+				wprintf(L"%s\n", args[i]);
+			}
+			LocalFree(args);
+		}
 		
 		// Force in-game.
 		getForcedLevelHook = safetyhook::create_inline(0x46746d, GetForcedLevel_Hook);
