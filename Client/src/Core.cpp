@@ -120,17 +120,5 @@ namespace Core {
 		trafficVehicleHook = safetyhook::create_inline(0x410bab, TrafficVehicle_Hook);
 		// Stops creation of cop vehicles.
 		createCopVehicleHook = safetyhook::create_inline(0x40fbee, CreateCopVehicle_Hook);
-		/*
-		// creates traffic on teleport
-		Hooking::MakeJMP((BYTE*)0x00412803, (DWORD)ReturnEarly, 5);
-		// ai vehicles
-		Hooking::MakeJMP((BYTE*)0x00412C1A, (DWORD)AIVehicleManagerHook, 5);
-		// cop vehicles
-		Hooking::MakeJMP((BYTE*)0x0040FC04, (DWORD)CreateCopVehicleHook, 5);
-		// scripted peds (?
-		Hooking::MakeJMP((BYTE*)0x004488D0, (DWORD)CreatePedsHook, 5);
-		// jump over other vehicle creation
-		Nop((BYTE*)0x42d007, 2);
-		MakeJMP((BYTE*)0x42D010, 0x42EA8D, 6);*/
 	}
 }
