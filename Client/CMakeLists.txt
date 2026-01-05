@@ -14,7 +14,7 @@ target_sources(DPLMPClient
         src/scan.cpp
         src/dpl/SpoolableResourceManager.cpp
         src/dpl/CLoadingScreen.cpp
-)
+ "include/dpl/CCharacterManager.h" "src/dpl/CCharacterManager.cpp" "include/dpl/AutoPtr.h" "include/dpl/CWeapon.h" "include/dpl/CCharacter.h" "src/dpl/CCharacter.cpp")
 
 target_include_directories(DPLMPClient
     PRIVATE

@@ -23,7 +23,7 @@ namespace Core {
 	{
 		// For THEN: 7
 		// For NOW: 24
-		return 7;
+		return 24;
 	}
 
 	static void __stdcall Stub_Hook() {
@@ -40,6 +40,24 @@ namespace Core {
 		return retVal;
 	}
 
+	static bool wasKeyJustPressed(int vk)
+	{
+		static SHORT lastState[256]{};
+
+		SHORT state = GetAsyncKeyState(vk);
+		bool pressed = (state & 0x8000) && !(lastState[vk] & 0x8000);
+
+		lastState[vk] = state;
+		return pressed;
+	}
+
+	static void DebugFrameUpdate() {
+		if (wasKeyJustPressed(VK_F2))
+		{
+			printf("WHAT! F2 Pressed!\n");
+		}
+	}
+
 	static void __fastcall FrameUpdate_Hook(void* me, void* _, void* unk1, void* unk2) {
 		frameUpdateHook.thiscall(me, unk1, unk2);
 		// Disable loading screen if nothing is being loaded.
@@ -51,6 +69,7 @@ namespace Core {
 			if (spoolStatus != 0)
 				loadingScreen->Deactivate();
 		}
+		DebugFrameUpdate();
 	}
 
 	static void __fastcall TrafficVehicle_Hook(void* me, void* _, void* unk1, void* unk2) {
