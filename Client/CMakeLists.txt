@@ -18,6 +18,8 @@ target_sources(DPLMPClient
         src/dpl/CCharacterManager.cpp
         src/dpl/CWeapon.cpp
         src/dpl/CPCViewport.cpp
+        src/dpl/CVehicleManager.cpp
+        src/dpl/CVehicle.cpp
 )
 
 target_include_directories(DPLMPClient
