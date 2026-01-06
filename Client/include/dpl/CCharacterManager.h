@@ -15,4 +15,6 @@ public:
 		AutoPtr<CWeapon, int> weaponPtr, Vector4* targetPosition, bool crouch, float health);
 	void FreeCharacter(AutoPtr<CCharacter, int>* characterPtr);
 	int GetFreeCharacterCount();
+	// no idea what this does or if it's correct
+	void CharacterSetNoFelon(CCharacter* character, int unk);
 };

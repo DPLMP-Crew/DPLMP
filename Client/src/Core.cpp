@@ -94,6 +94,7 @@ namespace Core {
 			vel.Z = 0.0f;
 			vel.W = 0.0f;
 			cmgr->CreateCharacter(createdChar, ECharacterType::TheDriver_Now, &pos, 0.0f, EnumAnimCondition::eACond_Default, ECharacterRoles::eCharacterRole_Network, &vel, false, weaponPtr, &vel, false, 200.0f);
+			cmgr->CharacterSetNoFelon(createdChar->m_pPointer, 2);
 			//printf("Created character %p! Rendermode: %i\n", createdChar, createdChar->GetRole());
 		}
 	}

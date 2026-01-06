@@ -34,3 +34,7 @@ void CCharacterManager::FreeCharacter(AutoPtr<CCharacter, int>* characterPtr) {
 int CCharacterManager::GetFreeCharacterCount() {
 	return *(float*)(this + 0x3DC);
 }
+
+void CCharacterManager::CharacterSetNoFelon(CCharacter* character, int unk) {
+	((void(__thiscall*)(CCharacterManager*, CCharacter*, int))0x4F6FE6)(this, character, unk);
+}
