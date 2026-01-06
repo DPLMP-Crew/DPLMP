@@ -54,16 +54,21 @@ namespace Core {
 
 	static void DebugFrameUpdate() {
 
-		static CCharacter* createdChar = nullptr;
+		static AutoPtr<CCharacter, int>* createdChar = new AutoPtr<CCharacter, int>();
+
+		if (wasKeyJustPressed(VK_F3))
+		{
+			printf("CharacterManager: %p\n", CCharacterManager::GetInstance());
+		}
 
 		if (wasKeyJustPressed(VK_F2))
 		{
 			printf("WHAT! F2 Pressed!\n");
-			if (createdChar != nullptr)
-				createdChar->SetHealth(0.0f);
 			CCharacterManager* cmgr = CCharacterManager::GetInstance();
+			if (createdChar != nullptr && createdChar->m_pPointer != nullptr) {
+				cmgr->FreeCharacter(createdChar);
+			}
 			AutoPtr<CWeapon, int> weaponPtr = AutoPtr<CWeapon, int>();
-			AutoPtr<CCharacter, int> out = AutoPtr<CCharacter, int>();
 			Vector4 pos = Vector4();
 			pos.X = 2461.992f;
 			pos.Y = 39.996f;
@@ -74,8 +79,7 @@ namespace Core {
 			vel.Y = 0.0f;
 			vel.Z = 0.0f;
 			vel.W = 0.0f;
-			cmgr->CreateCharacter(&out, ECharacterType::TheDriver_Now, &pos, 0.0f, EnumAnimCondition::eACond_Default, ECharacterRoles::eCharacterRole_Network, &vel, false, weaponPtr, &vel, false, 200.0f);
-			//createdChar = out.m_pPointer;
+			cmgr->CreateCharacter(createdChar, ECharacterType::TheDriver_Now, &pos, 0.0f, EnumAnimCondition::eACond_Default, ECharacterRoles::eCharacterRole_Network, &vel, false, weaponPtr, &vel, false, 200.0f);
 			//printf("Created character %p! Rendermode: %i\n", createdChar, createdChar->GetRole());
 		}
 	}
@@ -137,17 +141,19 @@ namespace Core {
 			}
 			LocalFree(args);
 		}
-		
+
+		// Lock timescale to full speed.
+		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
+
+		// Called every frame.
+		frameUpdateHook = safetyhook::create_inline(0x570f27, FrameUpdate_Hook);
+
 		// Force in-game.
 		getForcedLevelHook = safetyhook::create_inline(0x46746d, GetForcedLevel_Hook);
 		// Stub out CStatusControlNode::OnEnable to disable life events.
 		nodeOnEnableHook = safetyhook::create_inline(0x48719a, Stub_Hook);
 		// hook into Game Running state constructor to stop all life events.
 		cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
-		// Called every frame.
-		frameUpdateHook = safetyhook::create_inline(0x570f27, FrameUpdate_Hook);
-		// Lock timescale to full speed.
-		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
 
 		// REMOVE TRAFFIC HOOKS
 		// 
@@ -162,7 +168,9 @@ namespace Core {
 		// Stops creation of cop vehicles.
 		createCopVehicleHook = safetyhook::create_inline(0x40fbee, CreateCopVehicle_Hook);
 
-		// Test to change size of char pool
+		// Below causes a crash due to a buffer overflow in the character pool.
+		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.
+		// To truly fix this, we would have to heap allocate the pool (or allocate it in this dll space), and hook CCharacterManager::GetFreeCharacter and whatever else uses the pool. Which would take work.
 		//char pplAmount = 48;
 		//WriteToMemory((DWORD)0x4f764e, &pplAmount, 1);
 	}

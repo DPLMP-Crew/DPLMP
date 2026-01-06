@@ -13,5 +13,6 @@ public:
 	CCharacter* CreateCharacter(AutoPtr<CCharacter, int>* outChar, ECharacterType eType, Vector4* v4Position, float fHeading,
 		EnumAnimCondition eAnimCondition, ECharacterRoles eRole, Vector4* velocity, bool strafe,
 		AutoPtr<CWeapon, int> weaponPtr, Vector4* targetPosition, bool crouch, float health);
+	void FreeCharacter(AutoPtr<CCharacter, int>* characterPtr);
 	int GetFreeCharacterCount();
 };

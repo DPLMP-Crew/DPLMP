@@ -27,6 +27,10 @@ CCharacterManager* CCharacterManager::GetInstance()
 	return (CCharacterManager*)(*(int*)0x70C6E0); // 0x0070C6A4
 }
 
+void CCharacterManager::FreeCharacter(AutoPtr<CCharacter, int>* characterPtr) {
+	((void(__thiscall*)(CCharacterManager*, AutoPtr<CCharacter, int>*))0x4f6ee8)(this, characterPtr);
+}
+
 int CCharacterManager::GetFreeCharacterCount() {
 	return *(float*)(this + 0x3DC);
 }
