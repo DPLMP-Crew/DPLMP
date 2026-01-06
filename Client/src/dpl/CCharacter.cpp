@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "dpl/CCharacter.h"
 
 void CCharacter::GetPosition(Vector4* pos)
@@ -213,14 +212,6 @@ void CCharacter::DrawCrosshair(int Viewport, int unk)
 	((void(__thiscall*)(CCharacter*, int, int))0x4EB954)(this, Viewport, unk);
 }
 
-void CCharacter::DrawCrosshairHook(int Viewport, int unk)
-{
-	if (m_bDisableHUD)
-		return;
-
-	DrawCrosshair(Viewport, unk);
-}
-
 CCharacterRendering* CCharacter::GetRendering()
 {
 	return (CCharacterRendering*)((int)this + 1680);
@@ -293,6 +284,7 @@ void CCharacter::SetHealth(float health)
 	*(float*)(this + 0x684) = health;
 }
 
+// ld: this seems to be some kind of rendermode or render flags. can make char invisible or low poly etc.
 void CCharacter::SetRole(int role)
 {
 	*(int*)(this + 0x770) = role; // old: 0x3E0

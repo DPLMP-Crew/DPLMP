@@ -4,6 +4,11 @@
 #include <list>
 #include "dpl/CWeapon.h"
 #include "dpl/AutoPtr.h"
+#include "dpl/Vector4.h"
+#include "dpl/Matrix.h"
+#include "dpl/HAnimInstance.h"
+#include "dpl/EVehicleDoor.h"
+#include "dpl/CPCViewport.h"
 
 class CVehicle;
 class CCharacter;
@@ -48,8 +53,6 @@ public:
 	void GetAnimationRootMatrix(Matrix* m, HAnimClip* clip, float time);
 	bool ValidWeapon();
 
-	bool IsDriving();
-
 	void SetPosition(Vector4* pos);
 	void SetModel(int model);
 	void SetAnimType(int type);
@@ -59,7 +62,6 @@ public:
 	int GetVTableAddress();
 
 	void DrawCrosshair(int Viewport, int unk);
-	void DrawCrosshairHook(int Viewport, int unk);
 
 	void Melee(CCharacter* target);
 
@@ -102,16 +104,12 @@ public:
 	///</summary>
 	float GetHealth();
 
-	bool IsValid();
-
 	void SetRole(int role);
 	int GetRole();
 
 	void SetAllowGetOutOfVehicle(bool allow);
 	bool GetAllowGetOutOfVehicle();
 	void AllowVehicleExit(bool enable);
-
-	int GetId();
 
 	bool GetIsSpawned();
 	void SetIsSpawned(bool spawned);

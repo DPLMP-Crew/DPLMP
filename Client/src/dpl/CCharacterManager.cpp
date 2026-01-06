@@ -1,14 +1,14 @@
 #include "dpl/CCharacterManager.h"
 
 CCharacter* CCharacterManager::CreateCharacter
-(AutoPtr<CCharacter, int>* outChar, int eType, Vector4* v4Position, float fHeading,
+(AutoPtr<CCharacter, int>* outChar, ECharacterType eType, Vector4* v4Position, float fHeading,
 	EnumAnimCondition eAnimCondition, ECharacterRoles eRole, Vector4* velocity, bool strafe,
 	AutoPtr<CWeapon, int> weaponPtr, Vector4* targetPosition, bool crouch, float health)
 {
 	return ((CCharacter * (__thiscall*)(
 		CCharacterManager*,
 		AutoPtr<CCharacter, int> *, // it doesn't have in the PS2 preview build but it's kind of pointless when it can just be returned sometimes
-		int,
+		ECharacterType,
 		Vector4*,
 		float,
 		EnumAnimCondition,
@@ -25,4 +25,8 @@ CCharacter* CCharacterManager::CreateCharacter
 CCharacterManager* CCharacterManager::GetInstance()
 {
 	return (CCharacterManager*)(*(int*)0x70C6E0); // 0x0070C6A4
+}
+
+int CCharacterManager::GetFreeCharacterCount() {
+	return *(float*)(this + 0x3DC);
 }

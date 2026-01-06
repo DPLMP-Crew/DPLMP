@@ -3,6 +3,7 @@
 #include "dpl/CLifeEventDataManager.h"
 #include "dpl/SpoolableResourceManager.h"
 #include "dpl/CLoadingScreen.h"
+#include "dpl/CCharacterManager.h"
 #include "scan.h"
 #include <shellapi.h>
 
@@ -52,9 +53,30 @@ namespace Core {
 	}
 
 	static void DebugFrameUpdate() {
+
+		static CCharacter* createdChar = nullptr;
+
 		if (wasKeyJustPressed(VK_F2))
 		{
 			printf("WHAT! F2 Pressed!\n");
+			if (createdChar != nullptr)
+				createdChar->SetHealth(0.0f);
+			CCharacterManager* cmgr = CCharacterManager::GetInstance();
+			AutoPtr<CWeapon, int> weaponPtr = AutoPtr<CWeapon, int>();
+			AutoPtr<CCharacter, int> out = AutoPtr<CCharacter, int>();
+			Vector4 pos = Vector4();
+			pos.X = 2461.992f;
+			pos.Y = 39.996f;
+			pos.Z = -4368.734;
+			pos.W = 1.0f;
+			Vector4 vel = Vector4();
+			vel.X = 0.0f;
+			vel.Y = 0.0f;
+			vel.Z = 0.0f;
+			vel.W = 0.0f;
+			cmgr->CreateCharacter(&out, ECharacterType::TheDriver_Now, &pos, 0.0f, EnumAnimCondition::eACond_Default, ECharacterRoles::eCharacterRole_Network, &vel, false, weaponPtr, &vel, false, 200.0f);
+			//createdChar = out.m_pPointer;
+			//printf("Created character %p! Rendermode: %i\n", createdChar, createdChar->GetRole());
 		}
 	}
 
@@ -139,5 +161,9 @@ namespace Core {
 		trafficVehicleHook = safetyhook::create_inline(0x410bab, TrafficVehicle_Hook);
 		// Stops creation of cop vehicles.
 		createCopVehicleHook = safetyhook::create_inline(0x40fbee, CreateCopVehicle_Hook);
+
+		// Test to change size of char pool
+		//char pplAmount = 48;
+		//WriteToMemory((DWORD)0x4f764e, &pplAmount, 1);
 	}
 }
