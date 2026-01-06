@@ -4,6 +4,8 @@
 #include "dpl/SpoolableResourceManager.h"
 #include "dpl/CLoadingScreen.h"
 #include "dpl/CCharacterManager.h"
+#include "dpl/CVehicleManager.h"
+#include "dpl/LifeAcquirableVehicleManager.h"
 #include "scan.h"
 #include <shellapi.h>
 
@@ -55,15 +57,27 @@ namespace Core {
 	static void DebugFrameUpdate() {
 
 		static AutoPtr<CCharacter, int>* createdChar = new AutoPtr<CCharacter, int>();
+		static AutoPtr<CVehicle, int>* createdVehicle = new AutoPtr<CVehicle, int>();
+
+		if (wasKeyJustPressed(VK_F4)) {
+			printf("Creating a car!\n");
+			CVehicleManager* vmgr = CVehicleManager::GetInstance();
+			LifeAcquirableVehicleManager* amgr = LifeAcquirableVehicleManager::GetInstance();
+			if (createdVehicle != nullptr && createdVehicle->m_pPointer != nullptr) {
+				vmgr->FreeVehicle(createdVehicle);
+			}
+			vmgr->CreateVehicle(createdVehicle, tVehicleModelUID::tVehicleModelUID_Andec, 2465.992f, 39.996f, -4370.734f, 1.0f, 0.0f, true, true, false);
+			amgr->AddVehicle(createdVehicle->m_pPointer, 1);
+		}
 
 		if (wasKeyJustPressed(VK_F3))
 		{
-			printf("CharacterManager: %p\n", CCharacterManager::GetInstance());
+			printf("CharacterManager: %p\nVehicleManager: %p\nLifeAcquirableVehicleManager: %p\n", CCharacterManager::GetInstance(), CVehicleManager::GetInstance(), LifeAcquirableVehicleManager::GetInstance());
 		}
 
 		if (wasKeyJustPressed(VK_F2))
 		{
-			printf("WHAT! F2 Pressed!\n");
+			printf("Creating a guy!\n");
 			CCharacterManager* cmgr = CCharacterManager::GetInstance();
 			if (createdChar != nullptr && createdChar->m_pPointer != nullptr) {
 				cmgr->FreeCharacter(createdChar);
