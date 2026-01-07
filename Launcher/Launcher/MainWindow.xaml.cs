@@ -50,7 +50,7 @@ namespace Launcher
                 MessageBox.Show("Can't find game executable.");
                 return;
             }
-            Injector.LaunchAuto(gamePath, "");
+            Injector.LaunchAuto(gamePath, []);
         }
 
         private void GameExePathBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -69,26 +69,28 @@ namespace Launcher
 
         private void DevPlayButton_Click(object sender, RoutedEventArgs e)
         {
-            var cmd = "-dev ";
+            var cmd = new List<string>();
+
+            cmd.Add("-dev");
 
             if (DevCops.IsChecked == true)
             {
-                cmd += "-cops ";
+                cmd.Add("-cops");
             }
 
             if (DevTraffic.IsChecked == true)
             {
-                cmd += "-traffic ";
+                cmd.Add("-traffic");
             }
 
             if (DevSPLoop.IsChecked == true)
             {
-                cmd += "-sp ";
+                cmd.Add("-sp");
             }
 
             if (NowRadioButton.IsChecked == true)
             {
-                cmd += "-now ";
+                cmd.Add("-now");
             }
 
             var gamePath = Settings.Instance.GameExecutablePath;

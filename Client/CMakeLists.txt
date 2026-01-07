@@ -4,7 +4,6 @@ target_compile_definitions(DPLMPClient
     PRIVATE
         WIN32_LEAN_AND_MEAN
         NOMINMAX
-        _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 )
 
 target_sources(DPLMPClient

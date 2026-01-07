@@ -92,7 +92,7 @@ namespace Launcher
             return str;
         }
 
-        public static InjectionResult LaunchAuto(string executable, string commandLine)
+        public static InjectionResult LaunchAuto(string executable, IEnumerable<string> commandLine)
         {
             byte[] hash = { };
             using (var md5 = MD5.Create())
@@ -108,33 +108,48 @@ namespace Launcher
             Console.WriteLine($"Our Steam Hash: {ByteArrayToString(Constants.SteamExecutableHash)} ({Constants.SteamExecutableHash.Length})");
             Console.WriteLine($"Exe Hash: {ByteArrayToString(hash)} ({hash.Length})");
 
+            var cmdPath = Path.Combine(AppContext.BaseDirectory, Constants.CommandLineFileName);
+
+            var encoding = new UTF8Encoding(false);
+            File.WriteAllLines(cmdPath, commandLine, encoding);
+
+            var result = InjectionResult.Failed;
+
             if (hash.SequenceEqual(Constants.SteamExecutableHash))
             {
                 Console.WriteLine("Doing Steam Launch");
-                return LaunchSteam(commandLine);
+                result = LaunchSteam();
             }
             else
             {
                 Console.WriteLine("Doing Direct Launch");
-                return LaunchDirect(executable, commandLine);
+                result = LaunchDirect(executable);
             }
+
+            if (result != InjectionResult.Success)
+            {
+                File.Delete(cmdPath);
+            }
+
+            return result;
         }
 
-        public static InjectionResult LaunchSteam(string commandLine)
+        public static InjectionResult LaunchSteam()
         {
             Process.Start(new ProcessStartInfo {
-                FileName = $"steam://run/{Constants.GameSteamID}//{commandLine}",
+                FileName = $"steam://run/{Constants.GameSteamID}",
                 UseShellExecute = true
             });
             var dplProc = WaitForDPLSteam();
             if (dplProc != null)
             {
                 Inject(dplProc.Id);
+                return InjectionResult.Success;
             }
-            return InjectionResult.Success;
+            return InjectionResult.Failed;
         }
 
-        public static InjectionResult LaunchDirect(string executable, string commandLine)
+        public static InjectionResult LaunchDirect(string executable)
         {
             var si = new STARTUPINFO();
             si.cb = Marshal.SizeOf<STARTUPINFO>();
@@ -145,7 +160,7 @@ namespace Launcher
             var saThread = new SECURITY_ATTRIBUTES();
             saThread.nLength = Marshal.SizeOf<SECURITY_ATTRIBUTES>();
 
-            var result = Kernel.CreateProcess(executable, commandLine, ref saProc, ref saThread, false, (uint)ProcessCreationFlags.CreateSuspended, IntPtr.Zero, Path.GetDirectoryName(executable), ref si, out var pi);
+            var result = Kernel.CreateProcess(executable, "", ref saProc, ref saThread, false, (uint)ProcessCreationFlags.CreateSuspended, IntPtr.Zero, Path.GetDirectoryName(executable), ref si, out var pi);
             Inject(pi.dwProcessId);
             Kernel.ResumeThread(pi.hThread);
 

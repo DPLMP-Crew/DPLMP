@@ -13,6 +13,7 @@
 #include <vector>
 #include <fstream>
 #include <codecvt>
+#include <filesystem>
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -170,62 +171,52 @@ namespace Core {
 
 	static void ProcessCommand(const std::wstring& cmd)
 	{
-		wprintf(cmd.c_str());
-		printf("\n");
+		if (wcscmp(cmd.c_str(), L"-dev") == 0) {
+			DeveloperMode = true;
+		}
+		else if (DeveloperMode) {
+			if (wcscmp(cmd.c_str(), L"-cops") == 0)
+				EnableCopTraffic = true;
+			else if (wcscmp(cmd.c_str(), L"-traffic") == 0)
+				EnableTraffic = true;
+			else if (wcscmp(cmd.c_str(), L"-sp") == 0)
+				EnableNormalGameLoop = true;
+			else if (wcscmp(cmd.c_str(), L"-now") == 0)
+				DeveloperEra = ERA_NOW;
+		}
 	}
 
 	static void ParseCommandLine() {
 		std::wstring cmdPath = Directory + L"\\cmd_cache.bin";
-
-		printf("Command Line Path: ");
-		wprintf(cmdPath.c_str());
-		printf("\n");
-
-		std::wifstream file(cmdPath);
-		std::codecvt_utf8<wchar_t> loc = std::codecvt_utf8<wchar_t>();
-
-		file.imbue(std::locale(std::locale::empty(), &loc));
+		std::ifstream file(cmdPath);
 
 		if (!file.good()) {
 			printf("No command line.\n");
 			return;
 		}
 
-		std::wstring line;
-
-		printf("Command line:\n");
+		std::string line;
 
 		while (std::getline(file, line)) {
-			ProcessCommand(line);
+			int count = MultiByteToWideChar(CP_UTF8, 0, line.data(), line.size(), nullptr, 0);
+
+			if (count <= 0)
+				continue;
+
+			std::wstring result(count, L'\0');
+
+			MultiByteToWideChar(CP_UTF8, 0, line.data(), line.size(), result.data(), count);
+
+			ProcessCommand(result);
 		}
 
-		/*
-		int argCount = 0;
-		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &argCount);
-		if (args) {
-			for (int i = 0; i < argCount; i++) {
-				LPWSTR arg = args[i];
+		file.close();
 
-				wprintf(L"%s\n", arg);
-
-				if (wcscmp(arg, L"-dev") == 0)
-				{
-					DeveloperMode = true;
-				}
-				else if (DeveloperMode)
-				{
-					if (wcscmp(arg, L"-cops") == 0)
-						EnableCopTraffic = true;
-					else if (wcscmp(arg, L"-traffic") == 0)
-						EnableTraffic = true;
-					else if (wcscmp(arg, L"-sp") == 0)
-						EnableNormalGameLoop = true;
-					else if (wcscmp(arg, L"-now") == 0)
-						DeveloperEra = ERA_NOW;
-				}
-			}
-			LocalFree(args);
-		}*/
+		try {
+			std::filesystem::remove(cmdPath);
+		}
+		catch (const std::filesystem::filesystem_error& err) {
+		}
 	}
 
 	void Initialize() {
