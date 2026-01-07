@@ -10,6 +10,9 @@
 #include "dpl/CharacterAIManager.h"
 #include "scan.h"
 #include <shellapi.h>
+#include <vector>
+#include <fstream>
+#include <codecvt>
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -32,6 +35,8 @@ namespace Core {
 	static bool EnableTraffic = false;
 	static bool EnableCopTraffic = false;
 	static int DeveloperEra = ERA_THEN;
+
+	std::wstring Directory;
 
 	static int __stdcall GetForcedLevel_Hook()
 	{
@@ -163,8 +168,38 @@ namespace Core {
 		}
 	}
 
+	static void ProcessCommand(const std::wstring& cmd)
+	{
+		wprintf(cmd.c_str());
+		printf("\n");
+	}
+
 	static void ParseCommandLine() {
+		std::wstring cmdPath = Directory + L"\\cmd_cache.bin";
+
+		printf("Command Line Path: ");
+		wprintf(cmdPath.c_str());
+		printf("\n");
+
+		std::wifstream file(cmdPath);
+		std::codecvt_utf8<wchar_t> loc = std::codecvt_utf8<wchar_t>();
+
+		file.imbue(std::locale(std::locale::empty(), &loc));
+
+		if (!file.good()) {
+			printf("No command line.\n");
+			return;
+		}
+
+		std::wstring line;
+
 		printf("Command line:\n");
+
+		while (std::getline(file, line)) {
+			ProcessCommand(line);
+		}
+
+		/*
 		int argCount = 0;
 		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &argCount);
 		if (args) {
@@ -190,7 +225,7 @@ namespace Core {
 				}
 			}
 			LocalFree(args);
-		}
+		}*/
 	}
 
 	void Initialize() {
