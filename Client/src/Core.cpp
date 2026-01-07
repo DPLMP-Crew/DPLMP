@@ -7,6 +7,7 @@
 #include "dpl/CVehicleManager.h"
 #include "dpl/LifeAcquirableVehicleManager.h"
 #include "dpl/AIManager.h"
+#include "dpl/CharacterAIManager.h"
 #include "scan.h"
 #include <shellapi.h>
 
@@ -88,7 +89,7 @@ namespace Core {
 
 		if (wasKeyJustPressed(VK_F3))
 		{
-			printf("CharacterManager: %p\nVehicleManager: %p\nLifeAcquirableVehicleManager: %p\nAIManager: %p\n", CCharacterManager::GetInstance(), CVehicleManager::GetInstance(), LifeAcquirableVehicleManager::GetInstance(), AIManager::GetInstance());
+			printf("CharacterManager: %p\nVehicleManager: %p\nLifeAcquirableVehicleManager: %p\nAIManager: %p\nCharacterAIManager: %p\n", CCharacterManager::GetInstance(), CVehicleManager::GetInstance(), LifeAcquirableVehicleManager::GetInstance(), AIManager::GetInstance(), CharacterAIManager::GetInstance());
 		}
 
 		if (wasKeyJustPressed(VK_F2))
