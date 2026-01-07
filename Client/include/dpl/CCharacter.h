@@ -119,6 +119,14 @@ public:
 	bool GetShadowVisible();
 	void SetShadowVisible(bool set);
 
+	// actually no clue
+	float GetAlpha();
+	void SetAlpha(float alpha);
+
+	int GetRenderMode();
+	void SetRenderMode(int rendermode);
+	// --------------------------
+
 	// junkyard
 	void Unknown(CVehicle* pVehicle, CCharacter* pTarget);
 	void Unknown2(CVehicle* pVehicle, CVehicle* pTarget);

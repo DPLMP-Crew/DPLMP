@@ -284,7 +284,7 @@ void CCharacter::SetHealth(float health)
 	*(float*)(this + 0x684) = health;
 }
 
-// ld: this seems to be some kind of rendermode or render flags. can make char invisible or low poly etc.
+// ld: this seems to be lod instead.
 void CCharacter::SetRole(int role)
 {
 	*(int*)(this + 0x770) = role; // old: 0x3E0
@@ -314,4 +314,22 @@ bool CCharacter::GetShadowVisible() {
 void CCharacter::SetShadowVisible(bool set)
 {
 	((char*)(this + 0x74c))[0] = set ? 1 : 0;
+}
+
+float CCharacter::GetAlpha() {
+	return ((float*)(this + 0x5e4))[0];
+}
+
+void CCharacter::SetAlpha(float alpha)
+{
+	((float*)(this + 0x5e4))[0] = alpha;
+}
+
+int CCharacter::GetRenderMode() {
+	return ((int*)(this + 0x5e8))[0];
+}
+
+void CCharacter::SetRenderMode(int rendermode)
+{
+	((int*)(this + 0x5e8))[0] = rendermode;
 }
