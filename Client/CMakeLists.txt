@@ -23,6 +23,7 @@ target_sources(DPLMPClient
         src/dpl/LifeAcquirableVehicleManager.cpp
         src/dpl/AIManager.cpp
         src/dpl/CharacterAIManager.cpp
+        src/dpl/CLifeInstance_Character.cpp
 )
 
 target_include_directories(DPLMPClient

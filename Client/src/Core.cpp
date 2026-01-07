@@ -88,7 +88,7 @@ namespace Core {
 		static AutoPtr<CCharacter, int>* createdChar = new AutoPtr<CCharacter, int>();
 		static AutoPtr<CVehicle, int>* createdVehicle = new AutoPtr<CVehicle, int>();
 
-		if (wasKeyJustPressed(VK_F4)) {
+		if (wasKeyJustPressed(VK_F5)) {
 			printf("Creating a car!\n");
 			CVehicleManager* vmgr = CVehicleManager::GetInstance();
 			LifeAcquirableVehicleManager* amgr = LifeAcquirableVehicleManager::GetInstance();
