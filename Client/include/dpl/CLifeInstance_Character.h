@@ -7,7 +7,7 @@
 
 class CLifeInstance_Character {
 public:
-	CLifeInstanceCharacter();
+	CLifeInstance_Character();
 	void Initialise(
 		AutoPtr<CLifeInstance_Character, int>* outPtr,
 		int playerEnum,
@@ -21,6 +21,7 @@ public:
 		Vector4* velocitymaybe,
 		Matrix* zeroMatrix,
 		float heading,
+		int __iunk,
 		Matrix* _zeroMatrix,
 		Matrix* __zeroMatrix,
 		Matrix* ___zeroMatrix,
@@ -28,14 +29,14 @@ public:
 		void* _punk,
 		void* __punk,
 		void* ___punk,
-		int __iunk,
 		int ___iunk,
+		int ____iunk,
 		void* ____punk,
 		Vector4* rotation,
 		Matrix* ____zeroMatrix,
-		float funk;
+		float funk
 	);
 	void CoreCreate();
 private:
-	char[0x1f4] _pad;
+	char _pad[0x1f4];
 };

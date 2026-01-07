@@ -14,6 +14,7 @@
 #include <fstream>
 #include <codecvt>
 #include <filesystem>
+#include "dpl/CLifeInstance_Character.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -31,12 +32,15 @@ namespace Core {
 	static SafetyHookInline trafficVehicleHook{};
 	static SafetyHookInline createCopVehicleHook{};
 	static SafetyHookInline characterStepRenderingOptionsHook{};
+	static SafetyHookInline characterInitialiseHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
 	static bool EnableTraffic = false;
 	static bool EnableCopTraffic = false;
 	static int DeveloperEra = ERA_THEN;
+
+	static CWeapon* WeaponCopy = nullptr;
 
 	std::wstring Directory;
 
@@ -51,6 +55,70 @@ namespace Core {
 				return 7;
 		}
 		return 24;
+	}
+
+	static void __fastcall CLifeInstance_Character_Initialise_Hook(void* me, void* _,
+		void* _1,
+		void* _2,
+		void* _3,
+		void* _4,
+		void* _5,
+		void* _6,
+		void* _7,
+		void* _8,
+		void* _9,
+		void* _10,
+		void* _11,
+		void* _12,
+		void* _13,
+		void* _14,
+		void* _15,
+		void* _16,
+		CWeapon* weapon,
+		void* _18,
+		void* _19,
+		void* _20,
+		void* _21,
+		void* _22,
+		void* _23,
+		void* _24,
+		void* _25,
+		void* _26) {
+
+		if (WeaponCopy == nullptr) {
+			WeaponCopy = new CWeapon();
+			memcpy(WeaponCopy, weapon, sizeof(CWeapon));
+			printf("Copied weapon to {%p}!\n", WeaponCopy);
+		}
+
+		characterInitialiseHook.thiscall(me,
+			_1,
+			_2,
+			_3,
+			_4,
+			_5,
+			_6,
+			_7,
+			_8,
+			_9,
+			_10,
+			_11,
+			_12,
+			_13,
+			_14,
+			_15,
+			_16,
+			weapon,
+			_18,
+			_19,
+			_20,
+			_21,
+			_22,
+			_23,
+			_24,
+			_25,
+			_26
+		);
 	}
 
 	static void __stdcall Stub_Hook() {
@@ -87,6 +155,56 @@ namespace Core {
 
 		static AutoPtr<CCharacter, int>* createdChar = new AutoPtr<CCharacter, int>();
 		static AutoPtr<CVehicle, int>* createdVehicle = new AutoPtr<CVehicle, int>();
+
+		static AutoPtr<CLifeInstance_Character, int>* createdLifeChar = new AutoPtr<CLifeInstance_Character, int>();
+
+		if (wasKeyJustPressed(VK_F6)) {
+
+			Matrix* posMat = new Matrix();
+			posMat->right = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+			posMat->up = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+			posMat->forward = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+			posMat->pos = Vector4(2465.992f, 39.996f, -4370.734f, 1.0f);
+
+			Vector4* zeroVec = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			Vector4* zeroVec2 = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+
+			Matrix* emptyMat = new Matrix();
+
+			CLifeInstance_Character* lifeChar = new CLifeInstance_Character();
+			printf("Created LifeCharacter (%p)\n", lifeChar);
+			
+			lifeChar->Initialise(
+				createdLifeChar,
+				0xefcdab0,
+				ECharacterType::TheKid_Then,
+				posMat,
+				nullptr,
+				0,
+				0,
+				&posMat->pos,
+				&posMat->pos,
+				zeroVec,
+				emptyMat,
+				0.0f,
+				0,
+				emptyMat,
+				emptyMat,
+				emptyMat,
+				WeaponCopy,
+				0,
+				0,
+				0,
+				0,
+				0,
+				nullptr,
+				zeroVec2,
+				emptyMat,
+				1.0f
+			);
+
+			lifeChar->CoreCreate();
+		}
 
 		if (wasKeyJustPressed(VK_F5)) {
 			printf("Creating a car!\n");
@@ -265,6 +383,8 @@ namespace Core {
 
 		// Small graphical improvement, shadows on all characters + while on vehicle (for better bike visuals)
 		characterStepRenderingOptionsHook = safetyhook::create_inline(0x4e9d31, StepRenderingOptions_Hook);
+
+		characterInitialiseHook = safetyhook::create_inline(0x47e1a6, CLifeInstance_Character_Initialise_Hook);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.

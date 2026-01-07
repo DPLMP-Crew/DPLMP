@@ -1,23 +1,19 @@
 #pragma once
-#include "dpl/Vector.h"
+#include "dpl/Vector4.h"
 
 class Matrix {
 public:
-	// Why
 	union {
 		struct {
-			Vector right;
-			float pad;
-			Vector up;
-			float _pad;
-			Vector forward;
-			float __pad;
-			Vector pos;
-			float ___pad;
+			Vector4 right;
+			Vector4 up;
+			Vector4 forward;
+			Vector4 pos;
 		};
 		struct
 		{
 			float M[4][4];
 		};
 	};
+	Matrix();
 };

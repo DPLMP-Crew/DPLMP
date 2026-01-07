@@ -24,6 +24,7 @@ target_sources(DPLMPClient
         src/dpl/AIManager.cpp
         src/dpl/CharacterAIManager.cpp
         src/dpl/CLifeInstance_Character.cpp
+        src/dpl/Matrix.cpp
 )
 
 target_include_directories(DPLMPClient

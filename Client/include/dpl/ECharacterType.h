@@ -1,3 +1,5 @@
+#pragma once
+
 enum ECharacterType
 {
 	B01_Now = 0x3F,

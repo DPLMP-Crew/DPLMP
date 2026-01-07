@@ -177,13 +177,13 @@ bool CCharacter::ValidWeapon()
 
 float CCharacter::GetAngle()
 {
-	Vector fwd = GetMatrix()->forward;
+	Vector4 fwd = GetMatrix()->forward;
 	return atan2(fwd.X, fwd.Y);
 }
 
 void CCharacter::SetPosition(Vector4* pos)
 {
-	GetMatrix()->pos = { pos->X, pos->Y, pos->Z };
+	GetMatrix()->pos = { pos->X, pos->Y, pos->Z, 1.0 };
 }
 
 void CCharacter::SetModel(int model)

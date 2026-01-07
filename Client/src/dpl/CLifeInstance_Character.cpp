@@ -1,7 +1,9 @@
 #include "dpl/CLifeInstance_Character.h"
+#include <iostream>
 
 CLifeInstance_Character::CLifeInstance_Character()
 {
+	memset(this, 0, sizeof(CLifeInstance_Character));
 	((void(__thiscall*)(CLifeInstance_Character*))0x47f97e)(this);
 }
 
@@ -22,6 +24,7 @@ void CLifeInstance_Character::Initialise(
 	Vector4* velocitymaybe,
 	Matrix* zeroMatrix,
 	float heading,
+	int __iunk,
 	Matrix* _zeroMatrix,
 	Matrix* __zeroMatrix,
 	Matrix* ___zeroMatrix,
@@ -29,15 +32,16 @@ void CLifeInstance_Character::Initialise(
 	void* _punk,
 	void* __punk,
 	void* ___punk,
-	int __iunk,
 	int ___iunk,
+	int ____iunk,
 	void* ____punk,
 	Vector4* rotation,
 	Matrix* ____zeroMatrix,
-	float funk;
+	float funk
 )
 {
 	((void(__thiscall*)(
+		CLifeInstance_Character*,
 		AutoPtr<CLifeInstance_Character, int>*,
 		int,
 		ECharacterType,
@@ -50,6 +54,7 @@ void CLifeInstance_Character::Initialise(
 		Vector4*,
 		Matrix*,
 		float,
+		int,
 		Matrix*,
 		Matrix*,
 		Matrix*,
@@ -77,6 +82,7 @@ void CLifeInstance_Character::Initialise(
 		velocitymaybe, 
 		zeroMatrix,
 		heading, 
+		__iunk,
 		_zeroMatrix, 
 		__zeroMatrix, 
 		___zeroMatrix, 
@@ -84,8 +90,8 @@ void CLifeInstance_Character::Initialise(
 		_punk,
 		__punk,
 		___punk,
-		__iunk,
 		___iunk,
+		____iunk,
 		____punk,
 		rotation,
 		____zeroMatrix,
