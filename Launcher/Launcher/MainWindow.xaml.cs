@@ -106,5 +106,19 @@ namespace Launcher
             }
             Injector.LaunchAuto(gamePath, cmd);
         }
+
+        private void DevSPLoop_Changed(object sender, RoutedEventArgs e)
+        {
+            if (DevSPLoop.IsChecked == true)
+            {
+                ThenRadioButton.IsEnabled = false;
+                NowRadioButton.IsEnabled = false;
+            }
+            else
+            {
+                ThenRadioButton.IsEnabled = true;
+                NowRadioButton.IsEnabled = true;
+            }
+        }
     }
 }

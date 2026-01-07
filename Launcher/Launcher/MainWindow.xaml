@@ -74,7 +74,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Grid.RowSpan="2">
                     <Grid Height="34">
-                        <CheckBox x:Name="DevSPLoop" Content="Story Mode" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="DevSPLoop" Content="Story Mode" VerticalAlignment="Center" Checked="DevSPLoop_Changed" Unchecked="DevSPLoop_Changed"/>
                     </Grid>
                     <Grid Height="34">
                         <CheckBox x:Name="DevTraffic" Content="Enable Traffic" VerticalAlignment="Center"/>
