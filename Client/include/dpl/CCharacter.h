@@ -116,6 +116,9 @@ public:
 
 	int GetModel();
 
+	bool GetShadowVisible();
+	void SetShadowVisible(bool set);
+
 	// junkyard
 	void Unknown(CVehicle* pVehicle, CCharacter* pTarget);
 	void Unknown2(CVehicle* pVehicle, CVehicle* pTarget);

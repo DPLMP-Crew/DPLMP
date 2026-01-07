@@ -30,6 +30,7 @@ namespace Core {
 	static SafetyHookInline createTeleportTrafficHook{};
 	static SafetyHookInline trafficVehicleHook{};
 	static SafetyHookInline createCopVehicleHook{};
+	static SafetyHookInline characterStepRenderingOptionsHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -58,6 +59,11 @@ namespace Core {
 
 	static void __fastcall CreateTeleportTraffic_Hook(void* me) {
 		return;
+	}
+
+	static void __fastcall StepRenderingOptions_Hook(CCharacter* character) {
+		characterStepRenderingOptionsHook.thiscall(character);
+		character->SetShadowVisible(true);
 	}
 
 	static void* __fastcall CStateGameRunning_Hook(void* cState) {
@@ -256,6 +262,9 @@ namespace Core {
 			// Stops creation of cop vehicles.
 			createCopVehicleHook = safetyhook::create_inline(0x40fbee, CreateCopVehicle_Hook);
 		}
+
+		// Small graphical improvement, shadows on all characters + while on vehicle (for better bike visuals)
+		characterStepRenderingOptionsHook = safetyhook::create_inline(0x4e9d31, StepRenderingOptions_Hook);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.

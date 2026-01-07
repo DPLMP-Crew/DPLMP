@@ -306,3 +306,12 @@ void CCharacter::SetIsSpawned(bool spawned)
 	//return (((int*)(address + 0x680))[0] != 0 && ((int*)(address + 0x674))[0] != 0);
 	((char*)(this + 0x674))[0] = spawned ? 1 : 0;
 }
+
+bool CCharacter::GetShadowVisible() {
+	return (((char*)(this + 0x74c))[0] != 0);
+}
+
+void CCharacter::SetShadowVisible(bool set)
+{
+	((char*)(this + 0x74c))[0] = set ? 1 : 0;
+}
