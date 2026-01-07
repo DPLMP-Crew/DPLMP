@@ -6,8 +6,12 @@
 #include "dpl/CCharacterManager.h"
 #include "dpl/CVehicleManager.h"
 #include "dpl/LifeAcquirableVehicleManager.h"
+#include "dpl/AIManager.h"
 #include "scan.h"
 #include <shellapi.h>
+
+#define ERA_NOW 1
+#define ERA_THEN 0
 
 namespace Core {
 
@@ -22,10 +26,22 @@ namespace Core {
 	static SafetyHookInline trafficVehicleHook{};
 	static SafetyHookInline createCopVehicleHook{};
 
+	static bool DeveloperMode = false;
+	static bool EnableNormalGameLoop = false;
+	static bool EnableTraffic = false;
+	static bool EnableCopTraffic = false;
+	static int DeveloperEra = ERA_THEN;
+
 	static int __stdcall GetForcedLevel_Hook()
 	{
 		// For THEN: 7
 		// For NOW: 24
+		if (DeveloperMode) {
+			if (DeveloperEra == ERA_NOW)
+				return 24;
+			else
+				return 7;
+		}
 		return 24;
 	}
 
@@ -72,7 +88,7 @@ namespace Core {
 
 		if (wasKeyJustPressed(VK_F3))
 		{
-			printf("CharacterManager: %p\nVehicleManager: %p\nLifeAcquirableVehicleManager: %p\n", CCharacterManager::GetInstance(), CVehicleManager::GetInstance(), LifeAcquirableVehicleManager::GetInstance());
+			printf("CharacterManager: %p\nVehicleManager: %p\nLifeAcquirableVehicleManager: %p\nAIManager: %p\n", CCharacterManager::GetInstance(), CVehicleManager::GetInstance(), LifeAcquirableVehicleManager::GetInstance(), AIManager::GetInstance());
 		}
 
 		if (wasKeyJustPressed(VK_F2))
@@ -110,7 +126,9 @@ namespace Core {
 			if (spoolStatus != 0)
 				loadingScreen->Deactivate();
 		}
-		DebugFrameUpdate();
+		if (DeveloperMode) {
+			DebugFrameUpdate();
+		}
 	}
 
 	static void __fastcall TrafficVehicle_Hook(void* me, void* _, void* unk1, void* unk2) {
@@ -144,18 +162,40 @@ namespace Core {
 		}
 	}
 
-	void Initialize() {
-		WaitForSteamUnpack();
-		printf("EXE unpacked, hooking.\n");
+	static void ParseCommandLine() {
 		printf("Command line:\n");
 		int argCount = 0;
 		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &argCount);
 		if (args) {
 			for (int i = 0; i < argCount; i++) {
-				wprintf(L"%s\n", args[i]);
+				LPWSTR arg = args[i];
+
+				wprintf(L"%s\n", arg);
+
+				if (wcscmp(arg, L"-dev") == 0)
+				{
+					DeveloperMode = true;
+				}
+				else if (DeveloperMode)
+				{
+					if (wcscmp(arg, L"-cops") == 0)
+						EnableCopTraffic = true;
+					else if (wcscmp(arg, L"-traffic") == 0)
+						EnableTraffic = true;
+					else if (wcscmp(arg, L"-sp") == 0)
+						EnableNormalGameLoop = true;
+					else if (wcscmp(arg, L"-now") == 0)
+						DeveloperEra = ERA_NOW;
+				}
 			}
 			LocalFree(args);
 		}
+	}
+
+	void Initialize() {
+		WaitForSteamUnpack();
+		printf("EXE unpacked, hooking.\n");
+		ParseCommandLine();
 
 		// Lock timescale to full speed.
 		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
@@ -163,25 +203,32 @@ namespace Core {
 		// Called every frame.
 		frameUpdateHook = safetyhook::create_inline(0x570f27, FrameUpdate_Hook);
 
-		// Force in-game.
-		getForcedLevelHook = safetyhook::create_inline(0x46746d, GetForcedLevel_Hook);
-		// Stub out CStatusControlNode::OnEnable to disable life events.
-		nodeOnEnableHook = safetyhook::create_inline(0x48719a, Stub_Hook);
-		// hook into Game Running state constructor to stop all life events.
-		cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
+		if (!EnableNormalGameLoop) {
+			// Force in-game.
+			getForcedLevelHook = safetyhook::create_inline(0x46746d, GetForcedLevel_Hook);
+			// Stub out CStatusControlNode::OnEnable to disable life events.
+			nodeOnEnableHook = safetyhook::create_inline(0x48719a, Stub_Hook);
+			// hook into Game Running state constructor to stop all life events.
+			cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
+		}
 
-		// REMOVE TRAFFIC HOOKS
-		// 
-		// Removes traffic peds.
-		createTrafficPedestrianHook = safetyhook::create_inline(0x44884B, CreateTrafficPedestrian_Hook);
-		// Removes scripted ped spawns (hobos around barrels, food stands, etc.)
-		createScriptedPedestrianHook = safetyhook::create_inline(0x449388, CreateScriptedPedestrian_Hook);
-		// Removes ped and car traffic generation on teleport.
-		createTeleportTrafficHook = safetyhook::create_inline(0x412803, CreateTeleportTraffic_Hook);
-		// Stops creation of AI traffic vehicles.
-		trafficVehicleHook = safetyhook::create_inline(0x410bab, TrafficVehicle_Hook);
-		// Stops creation of cop vehicles.
-		createCopVehicleHook = safetyhook::create_inline(0x40fbee, CreateCopVehicle_Hook);
+		if (!EnableTraffic) {
+			// REMOVE TRAFFIC HOOKS
+			// 
+			// Removes traffic peds.
+			createTrafficPedestrianHook = safetyhook::create_inline(0x44884B, CreateTrafficPedestrian_Hook);
+			// Removes scripted ped spawns (hobos around barrels, food stands, etc.)
+			createScriptedPedestrianHook = safetyhook::create_inline(0x449388, CreateScriptedPedestrian_Hook);
+			// Removes ped and car traffic generation on teleport.
+			createTeleportTrafficHook = safetyhook::create_inline(0x412803, CreateTeleportTraffic_Hook);
+			// Stops creation of AI traffic vehicles.
+			trafficVehicleHook = safetyhook::create_inline(0x410bab, TrafficVehicle_Hook);
+		}
+
+		if (!EnableCopTraffic) {
+			// Stops creation of cop vehicles.
+			createCopVehicleHook = safetyhook::create_inline(0x40fbee, CreateCopVehicle_Hook);
+		}
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.

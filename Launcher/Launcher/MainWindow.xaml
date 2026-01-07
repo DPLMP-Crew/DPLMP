@@ -58,5 +58,37 @@
                 </StackPanel>
             </Grid>
         </TabItem>
+        <TabItem x:Name="DevTab" HorizontalAlignment="Center" Header="Dev Mode" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+            <TabItem.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TabItem.RenderTransform>
+            <Grid Background="#FFE5E5E5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90*"/>
+                    <RowDefinition Height="17*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.RowSpan="2">
+                    <Grid Height="34">
+                        <CheckBox x:Name="DevSPLoop" Content="Story Mode" VerticalAlignment="Center"/>
+                    </Grid>
+                    <Grid Height="34">
+                        <CheckBox x:Name="DevTraffic" Content="Enable Traffic" VerticalAlignment="Center"/>
+                    </Grid>
+                    <Grid Height="34">
+                        <CheckBox x:Name="DevCops" Content="Enable Cops" VerticalAlignment="Center"/>
+                    </Grid>
+                    <Grid Height="34">
+                        <RadioButton x:Name="ThenRadioButton" Content="'78 Era" VerticalAlignment="Center" GroupName="EraGroup"/>
+                        <RadioButton x:Name="NowRadioButton" Content="'06 Era" VerticalAlignment="Center" Margin="100,0,0,0" GroupName="EraGroup" IsChecked="True"/>
+                    </Grid>
+                </StackPanel>
+                <Button x:Name="DevPlayButton" Content="PLAY" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" Width="166" IsDefault="True" Grid.Row="1" Click="DevPlayButton_Click"/>
+            </Grid>
+        </TabItem>
     </TabControl>
 </Window>

@@ -21,6 +21,7 @@ target_sources(DPLMPClient
         src/dpl/CVehicleManager.cpp
         src/dpl/CVehicle.cpp
         src/dpl/LifeAcquirableVehicleManager.cpp
+        src/dpl/AIManager.cpp
 )
 
 target_include_directories(DPLMPClient

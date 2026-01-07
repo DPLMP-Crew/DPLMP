@@ -66,5 +66,43 @@ namespace Launcher
             Settings.Instance.PlayerName = PlayerNameBox.Text;
             Settings.Instance.Save();
         }
+
+        private void DevPlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            var cmd = "-dev ";
+
+            if (DevCops.IsChecked == true)
+            {
+                cmd += "-cops ";
+            }
+
+            if (DevTraffic.IsChecked == true)
+            {
+                cmd += "-traffic ";
+            }
+
+            if (DevSPLoop.IsChecked == true)
+            {
+                cmd += "-sp ";
+            }
+
+            if (NowRadioButton.IsChecked == true)
+            {
+                cmd += "-now ";
+            }
+
+            var gamePath = Settings.Instance.GameExecutablePath;
+            if (string.IsNullOrWhiteSpace(gamePath))
+            {
+                MessageBox.Show("Please locate your game executable path.");
+                return;
+            }
+            if (!File.Exists(gamePath))
+            {
+                MessageBox.Show("Can't find game executable.");
+                return;
+            }
+            Injector.LaunchAuto(gamePath, cmd);
+        }
     }
 }
