@@ -27,15 +27,25 @@ target_sources(DPLMPClient
         src/dpl/Matrix.cpp
         src/D3DHooks.cpp
         src/dpl/GameCamera.cpp
+        src/dpl/CLifePlayer.cpp
+        src/dpl/CLifeSystem.cpp
+        src/dpl/CPlayerDriverBehaviour.cpp
 )
 
 target_include_directories(DPLMPClient
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Include"
+)
+
+target_link_directories(DPLMPClient 
+    PRIVATE
+        "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Lib/x86"
 )
 
 target_link_libraries(DPLMPClient PRIVATE 
     safetyhook
     d3d9
+    d3dx9
 )

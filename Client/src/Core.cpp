@@ -17,6 +17,8 @@
 #include "dpl/CLifeInstance_Character.h"
 #include "D3DHooks.h"
 #include "dpl/GameCamera.h"
+#include <d3dx9.h>
+#include "dpl/CLifeSystem.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -35,6 +37,7 @@ namespace Core {
 	static SafetyHookInline createCopVehicleHook{};
 	static SafetyHookInline characterStepRenderingOptionsHook{};
 	static SafetyHookInline handlePlayerDeadHook{};
+	static SafetyHookInline setCameraMatrixHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -97,14 +100,28 @@ namespace Core {
 		static AutoPtr<CVehicle, int>* createdVehicle = new AutoPtr<CVehicle, int>();
 
 		if (wasKeyJustPressed(VK_F6)) {
-			GameCamera* gameCam = GameCamera::GetInstance();
-			Matrix camMatrix = gameCam->m_Matrix;
 
-			printf("GameCamera: %p\n\n", gameCam);
-			printf("%f %f %f %f\n", camMatrix.right.X, camMatrix.right.Y, camMatrix.right.Z, camMatrix.right.W);
-			printf("%f %f %f %f\n", camMatrix.up.X, camMatrix.up.Y, camMatrix.up.Z, camMatrix.up.W);
-			printf("%f %f %f %f\n", camMatrix.forward.X, camMatrix.forward.Y, camMatrix.forward.Z, camMatrix.forward.W);
-			printf("%f %f %f %f\n\n", camMatrix.pos.X, camMatrix.pos.Y, camMatrix.pos.Z, camMatrix.pos.W);
+			GameCamera* gameCam = GameCamera::GetInstance();
+			if (gameCam != nullptr) {
+				D3DXVECTOR3 from(gameCam->m_Matrix.pos.X + 10.0, gameCam->m_Matrix.pos.Y + 10.0, gameCam->m_Matrix.pos.Z);
+				D3DXVECTOR3 at(gameCam->m_Matrix.pos.X, gameCam->m_Matrix.pos.Y, gameCam->m_Matrix.pos.Z);
+				D3DXVECTOR3 up(0.0, 1.0, 0.0);
+
+				D3DXMATRIX lookAt;
+				D3DXMatrixLookAtLH(&lookAt, &from, &at, &up);
+
+				printf("Regular Matrix: %p\n\n", gameCam);
+				printf("%f %f %f %f\n", gameCam->m_Matrix.right.X, gameCam->m_Matrix.right.Y, gameCam->m_Matrix.right.Z, gameCam->m_Matrix.right.W);
+				printf("%f %f %f %f\n", gameCam->m_Matrix.up.X, gameCam->m_Matrix.up.Y, gameCam->m_Matrix.up.Z, gameCam->m_Matrix.up.W);
+				printf("%f %f %f %f\n", gameCam->m_Matrix.forward.X, gameCam->m_Matrix.forward.Y, gameCam->m_Matrix.forward.Z, gameCam->m_Matrix.forward.W);
+				printf("%f %f %f %f\n", gameCam->m_Matrix.pos.X, gameCam->m_Matrix.pos.Y, gameCam->m_Matrix.pos.Z, gameCam->m_Matrix.pos.W);
+
+				printf("LookAt Matrix: %p\n\n", gameCam);
+				printf("%f %f %f %f\n", lookAt._11, lookAt._12, lookAt._13, lookAt._14);
+				printf("%f %f %f %f\n", lookAt._21, lookAt._22, lookAt._23, lookAt._24);
+				printf("%f %f %f %f\n", lookAt._31, lookAt._32, lookAt._33, lookAt._34);
+				printf("%f %f %f %f\n", lookAt._41, lookAt._42, lookAt._43, lookAt._44);
+			}
 		}
 
 		if (wasKeyJustPressed(VK_F5)) {
@@ -161,6 +178,43 @@ namespace Core {
 		if (DeveloperMode) {
 			DebugFrameUpdate();
 		}
+	}
+
+	static void DoLookAtCam() {
+		GameCamera* gameCam = GameCamera::GetInstance();
+		CLifeSystem* lifeSystem = CLifeSystem::GetInstance();
+		if (gameCam == nullptr || lifeSystem == nullptr) return;
+		CLifePlayer* lifePlayer = lifeSystem->GetPlayer();
+		if (lifePlayer == nullptr) return;
+		CPlayerDriverBehaviour* bhav = lifePlayer->GetDriverBehaviour();
+		if (bhav == nullptr) return;
+		CCharacter* playerCharacter = bhav->GetCharacter();
+		if (playerCharacter == nullptr) return;
+
+		Vector4 charPos;
+
+		playerCharacter->GetPosition(&charPos);
+
+		Matrix* playerMatrix = playerCharacter->GetMatrix();
+
+		D3DXVECTOR3 from(charPos.X + 10.0, charPos.Y + 10.0, charPos.Z);
+		D3DXVECTOR3 at(charPos.X, charPos.Y, charPos.Z);
+		D3DXVECTOR3 up(0.0, 1.0, 0.0);
+
+		D3DXMATRIX lookAtView;
+		D3DXMATRIX lookAtWorld;
+		D3DXMatrixLookAtRH(&lookAtView, &from, &at, &up);
+		D3DXMatrixInverse(&lookAtWorld, nullptr, &lookAtView);
+
+		gameCam->m_Matrix.right = Vector4(lookAtWorld._11, lookAtWorld._12, lookAtWorld._13, lookAtWorld._14);
+		gameCam->m_Matrix.up = Vector4(lookAtWorld._21, lookAtWorld._22, lookAtWorld._23, lookAtWorld._24);
+		gameCam->m_Matrix.forward = Vector4(lookAtWorld._31, lookAtWorld._32, lookAtWorld._33, lookAtWorld._34);
+		gameCam->m_Matrix.pos = Vector4(lookAtWorld._41, lookAtWorld._42, lookAtWorld._43, lookAtWorld._44);
+	}
+
+	static void __fastcall SetCameraMatrix_Hook(void* me) {
+		DoLookAtCam();
+		setCameraMatrixHook.thiscall(me);
 	}
 
 	static void __fastcall TrafficVehicle_Hook(void* me, void* _, void* unk1, void* unk2) {
@@ -289,6 +343,8 @@ namespace Core {
 
 		// Don't pull up game over menu - respawning should be handled via Lua. Just have to re-set health, force stand up and wipe the screen.
 		handlePlayerDeadHook = safetyhook::create_inline(0x45b315, HandlePlayerDead_Hook);
+
+		setCameraMatrixHook = safetyhook::create_inline(0x55a646, SetCameraMatrix_Hook);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.
