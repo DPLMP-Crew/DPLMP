@@ -16,6 +16,7 @@
 #include <filesystem>
 #include "dpl/CLifeInstance_Character.h"
 #include "D3DHooks.h"
+#include "dpl/GameCamera.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -94,6 +95,17 @@ namespace Core {
 
 		static AutoPtr<CCharacter, int>* createdChar = new AutoPtr<CCharacter, int>();
 		static AutoPtr<CVehicle, int>* createdVehicle = new AutoPtr<CVehicle, int>();
+
+		if (wasKeyJustPressed(VK_F6)) {
+			GameCamera* gameCam = GameCamera::GetInstance();
+			Matrix camMatrix = gameCam->m_Matrix;
+
+			printf("GameCamera: %p\n\n", gameCam);
+			printf("%f %f %f %f\n", camMatrix.right.X, camMatrix.right.Y, camMatrix.right.Z, camMatrix.right.W);
+			printf("%f %f %f %f\n", camMatrix.up.X, camMatrix.up.Y, camMatrix.up.Z, camMatrix.up.W);
+			printf("%f %f %f %f\n", camMatrix.forward.X, camMatrix.forward.Y, camMatrix.forward.Z, camMatrix.forward.W);
+			printf("%f %f %f %f\n\n", camMatrix.pos.X, camMatrix.pos.Y, camMatrix.pos.Z, camMatrix.pos.W);
+		}
 
 		if (wasKeyJustPressed(VK_F5)) {
 			printf("Creating a car!\n");

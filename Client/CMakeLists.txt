@@ -26,6 +26,7 @@ target_sources(DPLMPClient
         src/dpl/CLifeInstance_Character.cpp
         src/dpl/Matrix.cpp
         src/D3DHooks.cpp
+        src/dpl/GameCamera.cpp
 )
 
 target_include_directories(DPLMPClient
