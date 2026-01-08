@@ -94,20 +94,6 @@ namespace Core {
 		return pressed;
 	}
 
-	static void PrintGlmMatrix(const glm::mat4& matrix) {
-		printf("%f %f %f %f\n", matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0]);
-		printf("%f %f %f %f\n", matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1]);
-		printf("%f %f %f %f\n", matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2]);
-		printf("%f %f %f %f\n", matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3]);
-	}
-
-	static void PrintGameMatrix(const Matrix& matrix) {
-		printf("%f %f %f %f\n", matrix.right.X, matrix.right.Y, matrix.right.Z, matrix.right.W);
-		printf("%f %f %f %f\n", matrix.up.X, matrix.up.Y, matrix.up.Z, matrix.up.W);
-		printf("%f %f %f %f\n", matrix.forward.X, matrix.forward.Y, matrix.forward.Z, matrix.forward.W);
-		printf("%f %f %f %f\n", matrix.pos.X, matrix.pos.Y, matrix.pos.Z, matrix.pos.W);
-	}
-
 	static void DebugFrameUpdate() {
 
 		static AutoPtr<CCharacter, int>* createdChar = new AutoPtr<CCharacter, int>();
@@ -115,49 +101,7 @@ namespace Core {
 
 		if (wasKeyJustPressed(VK_F6)) {
 
-			GameCamera* gameCam = GameCamera::GetInstance();
-			if (gameCam != nullptr) {
-				glm::mat4 toGlmMatrix = toGLM(gameCam->m_Matrix);
-				Matrix fromGlmMatrix = fromGLM(toGlmMatrix);
-
-				printf("\n");
-
-				printf("Camera Matrix (Game):\n");
-				PrintGameMatrix(gameCam->m_Matrix);
-				printf("\n");
-
-				printf("Camera Matrix (Game -> GLM):\n");
-				PrintGlmMatrix(toGlmMatrix);
-				printf("\n");
-
-				printf("Camera Matrix (Game -> GLM -> Game):\n");
-				PrintGameMatrix(fromGlmMatrix);
-				printf("\n");
-
-				printf("Position Matrix (GLM):\n");
-				PrintGlmMatrix(glm::translate(glm::mat4(1.0), glm::vec3(toGLM(gameCam->m_Matrix.pos))));
-				printf("\n");
-				
-				/*
-				D3DXVECTOR3 from(gameCam->m_Matrix.pos.X + 10.0, gameCam->m_Matrix.pos.Y + 10.0, gameCam->m_Matrix.pos.Z);
-				D3DXVECTOR3 at(gameCam->m_Matrix.pos.X, gameCam->m_Matrix.pos.Y, gameCam->m_Matrix.pos.Z);
-				D3DXVECTOR3 up(0.0, 1.0, 0.0);
-
-				D3DXMATRIX lookAt;
-				D3DXMatrixLookAtLH(&lookAt, &from, &at, &up);
-
-				printf("Regular Matrix: %p\n\n", gameCam);
-				printf("%f %f %f %f\n", gameCam->m_Matrix.right.X, gameCam->m_Matrix.right.Y, gameCam->m_Matrix.right.Z, gameCam->m_Matrix.right.W);
-				printf("%f %f %f %f\n", gameCam->m_Matrix.up.X, gameCam->m_Matrix.up.Y, gameCam->m_Matrix.up.Z, gameCam->m_Matrix.up.W);
-				printf("%f %f %f %f\n", gameCam->m_Matrix.forward.X, gameCam->m_Matrix.forward.Y, gameCam->m_Matrix.forward.Z, gameCam->m_Matrix.forward.W);
-				printf("%f %f %f %f\n", gameCam->m_Matrix.pos.X, gameCam->m_Matrix.pos.Y, gameCam->m_Matrix.pos.Z, gameCam->m_Matrix.pos.W);
-
-				printf("LookAt Matrix: %p\n\n", gameCam);
-				printf("%f %f %f %f\n", lookAt._11, lookAt._12, lookAt._13, lookAt._14);
-				printf("%f %f %f %f\n", lookAt._21, lookAt._22, lookAt._23, lookAt._24);
-				printf("%f %f %f %f\n", lookAt._31, lookAt._32, lookAt._33, lookAt._34);
-				printf("%f %f %f %f\n", lookAt._41, lookAt._42, lookAt._43, lookAt._44);*/
-			}
+			
 		}
 
 		if (wasKeyJustPressed(VK_F5)) {
@@ -215,7 +159,7 @@ namespace Core {
 			DebugFrameUpdate();
 		}
 	}
-	/*
+	
 	static void DoLookAtCam() {
 		GameCamera* gameCam = GameCamera::GetInstance();
 		CLifeSystem* lifeSystem = CLifeSystem::GetInstance();
@@ -231,25 +175,21 @@ namespace Core {
 
 		playerCharacter->GetPosition(&charPos);
 
-		Matrix* playerMatrix = playerCharacter->GetMatrix();
+		glm::vec3 from(charPos.X + 10.0, charPos.Y + 10.0, charPos.Z);
+		glm::vec3 at(charPos.X, charPos.Y, charPos.Z);
 
-		D3DXVECTOR3 from(charPos.X + 10.0, charPos.Y + 10.0, charPos.Z);
-		D3DXVECTOR3 at(charPos.X, charPos.Y, charPos.Z);
-		D3DXVECTOR3 up(0.0, 1.0, 0.0);
+		glm::vec3 heading = glm::normalize(from - at);
+		glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0, 1.0, 0.0), heading));
+		glm::vec3 up = glm::cross(heading, right);
 
-		D3DXMATRIX lookAtView;
-		D3DXMATRIX lookAtWorld;
-		D3DXMatrixLookAtRH(&lookAtView, &from, &at, &up);
-		D3DXMatrixInverse(&lookAtWorld, nullptr, &lookAtView);
-
-		gameCam->m_Matrix.right = Vector4(lookAtWorld._11, lookAtWorld._12, lookAtWorld._13, lookAtWorld._14);
-		gameCam->m_Matrix.up = Vector4(lookAtWorld._21, lookAtWorld._22, lookAtWorld._23, lookAtWorld._24);
-		gameCam->m_Matrix.forward = Vector4(lookAtWorld._31, lookAtWorld._32, lookAtWorld._33, lookAtWorld._34);
-		gameCam->m_Matrix.pos = Vector4(lookAtWorld._41, lookAtWorld._42, lookAtWorld._43, lookAtWorld._44);
-	}*/
+		gameCam->m_Matrix.right = fromGLM(glm::vec4(right, 0.0));
+		gameCam->m_Matrix.up = fromGLM(glm::vec4(up, 0.0));
+		gameCam->m_Matrix.forward = fromGLM(glm::vec4(heading, 0.0));
+		gameCam->m_Matrix.pos = fromGLM(glm::vec4(from, 1.0));
+	}
 
 	static void __fastcall SetCameraMatrix_Hook(void* me) {
-		//DoLookAtCam();
+		DoLookAtCam();
 		setCameraMatrixHook.thiscall(me);
 	}
 
