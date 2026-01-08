@@ -25,6 +25,7 @@ target_sources(DPLMPClient
         src/dpl/CharacterAIManager.cpp
         src/dpl/CLifeInstance_Character.cpp
         src/dpl/Matrix.cpp
+        src/D3DHooks.cpp
 )
 
 target_include_directories(DPLMPClient
@@ -33,4 +34,7 @@ target_include_directories(DPLMPClient
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(DPLMPClient PRIVATE safetyhook)
+target_link_libraries(DPLMPClient PRIVATE 
+    safetyhook
+    d3d9
+)

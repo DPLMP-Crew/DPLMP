@@ -15,6 +15,7 @@
 #include <codecvt>
 #include <filesystem>
 #include "dpl/CLifeInstance_Character.h"
+#include "D3DHooks.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -235,6 +236,8 @@ namespace Core {
 		WaitForSteamUnpack();
 		printf("EXE unpacked, hooking.\n");
 		ParseCommandLine();
+
+		D3DHooks::Initialize();
 
 		// Lock timescale to full speed.
 		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
