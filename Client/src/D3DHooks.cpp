@@ -8,6 +8,8 @@ namespace D3DHooks {
     };
 
     enum eD3D9Device : int {
+        Reset = 16,
+        Present = 17,
         EndScene = 42
     };
 
