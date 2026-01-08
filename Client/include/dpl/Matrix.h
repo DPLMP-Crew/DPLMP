@@ -16,4 +16,10 @@ public:
 		};
 	};
 	Matrix();
+	Matrix(Vector4 setright, Vector4 setup, Vector4 setforward, Vector4 setpos) {
+		right = setright;
+		up = setup;
+		forward = setforward;
+		pos = setpos;
+	}
 };

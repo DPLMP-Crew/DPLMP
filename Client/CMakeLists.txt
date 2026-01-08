@@ -48,4 +48,5 @@ target_link_libraries(DPLMPClient PRIVATE
     safetyhook
     d3d9
     d3dx9
+    glm
 )

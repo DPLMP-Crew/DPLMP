@@ -7,9 +7,21 @@ include(FetchContent)
 FetchContent_Declare(
     safetyhook
     GIT_REPOSITORY "https://github.com/cursey/safetyhook.git"
-    GIT_TAG "origin/main"
+    GIT_TAG "main"
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(safetyhook)
+
+FetchContent_Declare(
+    glm
+    GIT_REPOSITORY "https://github.com/g-truc/glm.git"
+    GIT_TAG "master"
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(glm)
 
 #FetchContent_Declare(
 #    RakNet

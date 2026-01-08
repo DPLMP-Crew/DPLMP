@@ -9,5 +9,7 @@ public:
 		Y = b;
 		Z = c;
 	}
-	float X, Y, Z;
+	float X = 0.0f;
+	float Y = 0.0f;
+	float Z = 0.0f;
 };
