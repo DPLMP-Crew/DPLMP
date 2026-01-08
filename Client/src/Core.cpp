@@ -32,6 +32,7 @@ namespace Core {
 	static SafetyHookInline trafficVehicleHook{};
 	static SafetyHookInline createCopVehicleHook{};
 	static SafetyHookInline characterStepRenderingOptionsHook{};
+	static SafetyHookInline handlePlayerDeadHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -52,6 +53,10 @@ namespace Core {
 				return 7;
 		}
 		return 24;
+	}
+
+	static void __fastcall HandlePlayerDead_Hook(void* me) {
+		return;
 	}
 
 	static void __stdcall Stub_Hook() {
@@ -266,6 +271,9 @@ namespace Core {
 
 		// Small graphical improvement, shadows on all characters + while on vehicle (for better bike visuals)
 		characterStepRenderingOptionsHook = safetyhook::create_inline(0x4e9d31, StepRenderingOptions_Hook);
+
+		// Don't pull up game over menu - respawning should be handled via Lua. Just have to re-set health, force stand up and wipe the screen.
+		handlePlayerDeadHook = safetyhook::create_inline(0x45b315, HandlePlayerDead_Hook);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.
