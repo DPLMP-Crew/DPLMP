@@ -19,6 +19,7 @@
 #include "dpl/GameCamera.h"
 #include "dpl/CLifeSystem.h"
 #include "mathutil.h"
+#include "dpl/CWipeManager.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -100,8 +101,17 @@ namespace Core {
 		static AutoPtr<CVehicle, int>* createdVehicle = new AutoPtr<CVehicle, int>();
 
 		if (wasKeyJustPressed(VK_F6)) {
+			// Revive if dead
+			CLifeSystem* lifeSystem = CLifeSystem::GetInstance();
+			CLifePlayer* play = lifeSystem->GetPlayer();
+			CPlayerDriverBehaviour* bhav = play->GetDriverBehaviour();
+			CCharacter* character = bhav->GetCharacter();
 
-			
+			if (character->GetHealth() <= 0.0f) {
+				character->SetHealth(1.0f);
+				character->ForceIdleMode();
+				CWipeManager::GetInstance()->ResetWipes();
+			}
 		}
 
 		if (wasKeyJustPressed(VK_F5)) {
@@ -179,8 +189,8 @@ namespace Core {
 		glm::vec3 at(charPos.X, charPos.Y, charPos.Z);
 
 		glm::vec3 heading = glm::normalize(from - at);
-		glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0, 1.0, 0.0), heading));
-		glm::vec3 up = glm::cross(heading, right);
+		glm::vec3 right = glm::normalize(glm::cross(VEC3_UP, heading));
+		glm::vec3 up = glm::normalize(glm::cross(heading, right));
 
 		gameCam->m_Matrix.right = fromGLM(glm::vec4(right, 0.0));
 		gameCam->m_Matrix.up = fromGLM(glm::vec4(up, 0.0));
@@ -189,7 +199,7 @@ namespace Core {
 	}
 
 	static void __fastcall SetCameraMatrix_Hook(void* me) {
-		DoLookAtCam();
+		//DoLookAtCam();
 		setCameraMatrixHook.thiscall(me);
 	}
 

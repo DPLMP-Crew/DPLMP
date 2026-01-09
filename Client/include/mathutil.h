@@ -5,6 +5,9 @@
 #include "dpl/Vector4.h"
 #include "dpl/Matrix.h"
 
+#define VEC3_RIGHT glm::vec3(1.0, 0.0, 0.0)
+#define VEC3_UP glm::vec3(0.0, 1.0, 0.0)
+#define VEC3_FORWARD glm::vec3(0.0, 0.0, 1.0)
 
 inline glm::vec3 toGLM(const Vector& v) { return glm::vec3(v.X, v.Y, v.Z); }
 inline glm::vec4 toGLM(const Vector4& v) { return glm::vec4(v.X, v.Y, v.Z, v.W); }

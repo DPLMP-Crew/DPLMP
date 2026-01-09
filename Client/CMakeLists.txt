@@ -30,6 +30,7 @@ target_sources(DPLMPClient
         src/dpl/CLifePlayer.cpp
         src/dpl/CLifeSystem.cpp
         src/dpl/CPlayerDriverBehaviour.cpp
+        src/dpl/CWipeManager.cpp
 )
 
 target_include_directories(DPLMPClient
