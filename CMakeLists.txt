@@ -23,6 +23,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glm)
 
+FetchContent_Declare(
+    lua
+    GIT_REPOSITORY "https://github.com/marovira/lua.git"
+    GIT_TAG "master"
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(lua)
+
 #FetchContent_Declare(
 #    RakNet
 #    GIT_REPOSITORY "https://github.com/facebookarchive/RakNet.git"
