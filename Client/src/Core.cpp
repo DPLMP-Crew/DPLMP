@@ -199,13 +199,13 @@ namespace Core {
 
 	static std::chrono::steady_clock::time_point deltaTimePoint;
 
-	static void __fastcall FrameUpdate_Hook(void* me, void* _, void* unk1, void* unk2) {
+	static void __fastcall FrameUpdate_Hook(void* me) {
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 		std::chrono::duration<float> delta = now - deltaTimePoint;
 		DeltaTime = delta.count();
 		deltaTimePoint = now;
 
-		frameUpdateHook.thiscall(me, unk1, unk2);
+		frameUpdateHook.thiscall(me);
 		// Disable loading screen if nothing is being loaded.
 		SpoolableResourceManager* resManager = SpoolableResourceManager::GetInstance();
 		CLoadingScreen* loadingScreen = CLoadingScreen::GetInstance();
@@ -365,7 +365,7 @@ namespace Core {
 		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
 
 		// Called every frame.
-		frameUpdateHook = safetyhook::create_inline(0x570f27, FrameUpdate_Hook);
+		frameUpdateHook = safetyhook::create_inline(0x5ec01f, FrameUpdate_Hook);
 
 		if (!EnableNormalGameLoop) {
 			// Force in-game.
