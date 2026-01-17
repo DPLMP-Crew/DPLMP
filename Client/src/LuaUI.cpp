@@ -5,12 +5,12 @@
 void LuaUI::Register(sol::state* lua) {
 	sol::table uiTable = lua->create_named_table("UI");
 	uiTable.set_function("ShowNotification",
-		[](const std::string& text, float duration) {
+		[](const std::string& text, float duration, bool fadeOut) {
 			UINotification* uiNotif = UINotification::GetInstance();
 			if (uiNotif == nullptr) return;
 			uiNotif->Clear();
 			UINotification::SetCustomString(text.c_str());
-			uiNotif->Show(0, 0, 999, duration, true);
+			uiNotif->Show(0, 0, 137, duration, fadeOut);
 		}
 	);
 	uiTable.set_function("ClearNotification",
