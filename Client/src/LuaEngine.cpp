@@ -8,6 +8,14 @@
 IncludeAPI(LuaUI);
 IncludeAPI(LuaHooks);
 
+void LuaScheduler::Update(float delta) {
+
+}
+
+void LuaEngine::Update(float delta) {
+	m_Scheduler.Update(delta);
+}
+
 LuaEngine::LuaEngine() {
 	m_LuaState.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::coroutine, sol::lib::math, sol::lib::package, sol::lib::string, sol::lib::table, sol::lib::utf8);
 	RegisterAPI(LuaUI);

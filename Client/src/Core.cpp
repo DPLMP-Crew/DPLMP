@@ -203,6 +203,7 @@ namespace Core {
 		if (DeveloperMode) {
 			DebugFrameUpdate();
 		}
+		Lua->Update(DeltaTime);
 	}
 	
 	static void DoLookAtCam() {
