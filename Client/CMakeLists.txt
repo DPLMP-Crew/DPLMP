@@ -37,6 +37,7 @@ target_sources(DPLMPClient
         src/LuaHooks.cpp
         src/LuaCallback.cpp
         src/LuaScheduler.cpp
+        src/LuaInput.cpp
 )
 
 target_include_directories(DPLMPClient

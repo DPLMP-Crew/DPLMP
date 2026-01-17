@@ -4,6 +4,7 @@
 #include <vector>
 #include "LuaHooks.h"
 #include "LuaUI.h"
+#include "LuaInput.h"
 
 class LuaEngine {
 public:
@@ -12,6 +13,8 @@ public:
 	void RunScriptFromFile(const std::wstring& filename);
 	sol::state m_LuaState;
 	LuaScheduler m_Scheduler;
+
 	LuaHooks m_LuaHooks;
 	LuaUI m_LuaUI;
+	LuaInput m_LuaInput;
 };

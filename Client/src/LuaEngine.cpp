@@ -12,6 +12,7 @@ LuaEngine::LuaEngine() {
 	m_LuaState.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::coroutine, sol::lib::math, sol::lib::package, sol::lib::string, sol::lib::table, sol::lib::utf8);
 	m_LuaUI.Register(&m_LuaState);
 	m_LuaHooks.Register(&m_LuaState, &m_Scheduler);
+	m_LuaInput.Register(&m_LuaState);
 }
 
 void LuaEngine::RunScriptFromFile(const std::wstring& filename) {
