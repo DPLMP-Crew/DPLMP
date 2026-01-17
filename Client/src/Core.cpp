@@ -22,6 +22,7 @@
 #include "dpl/CWipeManager.h"
 #include "LuaEngine.h"
 #include "dpl/UINotification.h"
+#include <chrono>
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -53,6 +54,7 @@ namespace Core {
 
 	std::wstring Directory;
 	bool PlayerSpawned = true;
+	float DeltaTime = 0.0;
 
 	bool IsGamePaused() {
 		return (((char*)0x6e73e2)[0] == 1);
@@ -180,7 +182,14 @@ namespace Core {
 		}
 	}
 
+	static std::chrono::steady_clock::time_point deltaTimePoint;
+
 	static void __fastcall FrameUpdate_Hook(void* me, void* _, void* unk1, void* unk2) {
+		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+		std::chrono::duration<float> delta = now - deltaTimePoint;
+		DeltaTime = delta.count();
+		deltaTimePoint = now;
+
 		frameUpdateHook.thiscall(me, unk1, unk2);
 		// Disable loading screen if nothing is being loaded.
 		SpoolableResourceManager* resManager = SpoolableResourceManager::GetInstance();
