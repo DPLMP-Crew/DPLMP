@@ -33,6 +33,7 @@ target_sources(DPLMPClient
         src/dpl/CWipeManager.cpp
         src/LuaEngine.cpp
         src/dpl/UINotification.cpp
+        src/LuaUI.cpp
 )
 
 target_include_directories(DPLMPClient
