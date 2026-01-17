@@ -333,3 +333,11 @@ void CCharacter::SetRenderMode(int rendermode)
 {
 	((int*)(this + 0x5e8))[0] = rendermode;
 }
+
+int CCharacter::GetDeadState() {
+	return ((int*)(this + 0x644))[0];
+}
+
+void CCharacter::SetDeadState(int set) {
+	((int*)(this + 0x644))[0] = set;
+}

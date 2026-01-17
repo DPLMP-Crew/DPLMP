@@ -140,6 +140,7 @@ namespace Core {
 				character->SetHealth(1.0f);
 				character->ForceIdleMode();
 				CWipeManager::GetInstance()->ResetWipes();
+				character->SetDeadState(0);
 			}
 		}
 

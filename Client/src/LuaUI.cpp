@@ -1,5 +1,6 @@
 #include "LuaUI.h"
 #include "dpl/UINotification.h"
+#include "dpl/CWipeManager.h"
 
 void LuaUI::Register(sol::state* lua) {
 	sol::table uiTable = lua->create_named_table("UI");

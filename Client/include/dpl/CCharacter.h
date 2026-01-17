@@ -119,6 +119,9 @@ public:
 	bool GetShadowVisible();
 	void SetShadowVisible(bool set);
 
+	int GetDeadState();
+	void SetDeadState(int set);
+
 	// actually no clue
 	float GetAlpha();
 	void SetAlpha(float alpha);
