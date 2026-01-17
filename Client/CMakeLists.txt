@@ -32,6 +32,7 @@ target_sources(DPLMPClient
         src/dpl/CPlayerDriverBehaviour.cpp
         src/dpl/CWipeManager.cpp
         src/LuaEngine.cpp
+        src/dpl/UINotification.cpp
 )
 
 target_include_directories(DPLMPClient

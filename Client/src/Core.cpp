@@ -21,6 +21,7 @@
 #include "mathutil.h"
 #include "dpl/CWipeManager.h"
 #include "LuaEngine.h"
+#include "dpl/UINotification.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -137,6 +138,8 @@ namespace Core {
 		}
 
 		if (wasKeyJustPressed(VK_F5)) {
+			UINotification::SetCustomString("Car Spawned!");
+			UINotification::GetInstance()->Show(0, 0, 999, 5.0f, true);
 			printf("Creating a car!\n");
 			CVehicleManager* vmgr = CVehicleManager::GetInstance();
 			LifeAcquirableVehicleManager* amgr = LifeAcquirableVehicleManager::GetInstance();
