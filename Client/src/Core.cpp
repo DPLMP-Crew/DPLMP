@@ -228,14 +228,16 @@ namespace Core {
 			else
 			{
 				if (!PlayerDead) {
-					if (Lua)
+					if (Lua != nullptr)
+					{
 						Lua->m_LuaHooks.FireHook(HookType::OnLocalPlayerDead);
+					}
 					PlayerDead = true;
 				}
 			}
 		}
 
-		if (Lua)
+		if (Lua!= nullptr)
 			Lua->Update(DeltaTime);
 	}
 	
