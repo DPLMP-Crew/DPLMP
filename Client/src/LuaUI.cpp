@@ -7,6 +7,7 @@ void LuaUI::Register(sol::state* lua) {
 	uiTable.set_function("ShowNotification",
 		[](const std::string& text, float duration) {
 			UINotification* uiNotif = UINotification::GetInstance();
+			if (uiNotif == nullptr) return;
 			uiNotif->Clear();
 			UINotification::SetCustomString(text.c_str());
 			uiNotif->Show(0, 0, 999, duration, true);
@@ -14,12 +15,16 @@ void LuaUI::Register(sol::state* lua) {
 	);
 	uiTable.set_function("ClearNotification",
 		[] {
-			UINotification::GetInstance()->Clear();
+			UINotification* uiNotif = UINotification::GetInstance();
+			if (uiNotif == nullptr) return;
+			uiNotif->Clear();
 		}
 	);
 	uiTable.set_function("ResetWipes",
 		[] {
-			CWipeManager::GetInstance()->ResetWipes();
+			CWipeManager* wipeMgr = CWipeManager::GetInstance();
+			if (wipeMgr == nullptr) return;
+			wipeMgr->ResetWipes();
 		}
 	);
 }
