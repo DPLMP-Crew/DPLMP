@@ -13,5 +13,10 @@ namespace LuaUI {
 				uiNotif->Show(0, 0, 999, duration, true);
 			}
 		);
+		uiTable.set_function("ClearNotification",
+			[] {
+				UINotification::GetInstance()->Clear();
+			}
+		);
 	}
 }
