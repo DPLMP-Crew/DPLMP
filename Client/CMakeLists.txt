@@ -31,6 +31,7 @@ target_sources(DPLMPClient
         src/dpl/CLifeSystem.cpp
         src/dpl/CPlayerDriverBehaviour.cpp
         src/dpl/CWipeManager.cpp
+        src/LuaEngine.cpp
 )
 
 target_include_directories(DPLMPClient
@@ -50,4 +51,6 @@ target_link_libraries(DPLMPClient PRIVATE
     d3d9
     d3dx9
     glm
+    lua
+    sol2
 )
