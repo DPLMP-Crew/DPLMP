@@ -2,14 +2,16 @@
 #include <fstream>
 #include <filesystem>
 #include <windows.h>
+#define IncludeAPI(name) namespace name { void Register(LuaEngine* lua); }
+#define RegisterAPI(name) name::Register(this);
 
-namespace LuaUI {
-	void Register(LuaEngine* lua);
-}
+IncludeAPI(LuaUI);
+IncludeAPI(LuaHooks);
 
 LuaEngine::LuaEngine() {
 	m_LuaState.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::coroutine, sol::lib::math, sol::lib::package, sol::lib::string, sol::lib::table, sol::lib::utf8);
-	LuaUI::Register(this);
+	RegisterAPI(LuaUI);
+	RegisterAPI(LuaHooks);
 }
 
 void LuaEngine::RunScriptFromFile(const std::wstring& filename) {
