@@ -35,6 +35,8 @@ target_sources(DPLMPClient
         src/dpl/UINotification.cpp
         src/LuaUI.cpp
         src/LuaHooks.cpp
+        src/LuaCallback.cpp
+        src/LuaScheduler.cpp
 )
 
 target_include_directories(DPLMPClient

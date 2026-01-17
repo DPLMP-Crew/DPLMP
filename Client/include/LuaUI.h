@@ -1,6 +1,7 @@
 #pragma once
-#include "LuaEngine.h"
+#include <sol/sol.hpp>
 
-namespace LuaUI {
-	void Register(LuaEngine* lua);
-}
+class LuaUI {
+public:
+	void Register(sol::state* lua);
+};

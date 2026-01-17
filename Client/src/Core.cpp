@@ -23,6 +23,7 @@
 #include "LuaEngine.h"
 #include "dpl/UINotification.h"
 #include <chrono>
+#include "LuaHooks.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -55,6 +56,8 @@ namespace Core {
 	std::wstring Directory;
 	bool PlayerSpawned = true;
 	float DeltaTime = 0.0;
+
+	static bool PlayerDead = false;
 
 	bool IsGamePaused() {
 		return (((char*)0x6e73e2)[0] == 1);
@@ -182,6 +185,17 @@ namespace Core {
 		}
 	}
 
+	static CCharacter* GetPlayerCharacter() {
+		CLifeSystem* lifeSystem = CLifeSystem::GetInstance();
+		if (lifeSystem == nullptr) return nullptr;
+		CLifePlayer* lifePlayer = lifeSystem->GetPlayer();
+		if (lifePlayer == nullptr) return nullptr;
+		CPlayerDriverBehaviour* bhav = lifePlayer->GetDriverBehaviour();
+		if (bhav == nullptr) return nullptr;
+		CCharacter* ch = bhav->GetCharacter();
+		return ch;
+	}
+
 	static std::chrono::steady_clock::time_point deltaTimePoint;
 
 	static void __fastcall FrameUpdate_Hook(void* me, void* _, void* unk1, void* unk2) {
@@ -203,7 +217,26 @@ namespace Core {
 		if (DeveloperMode) {
 			DebugFrameUpdate();
 		}
-		Lua->Update(DeltaTime);
+
+		CCharacter* playerCharacter = GetPlayerCharacter();
+
+		if (playerCharacter != nullptr) {
+			if (playerCharacter->GetHealth() > 0.0f)
+			{
+				PlayerDead = false;
+			}
+			else
+			{
+				if (!PlayerDead) {
+					if (Lua)
+						Lua->m_LuaHooks.FireHook(HookType::OnLocalPlayerDead);
+					PlayerDead = true;
+				}
+			}
+		}
+
+		if (Lua)
+			Lua->Update(DeltaTime);
 	}
 	
 	static void DoLookAtCam() {
