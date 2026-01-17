@@ -17,4 +17,9 @@ void LuaUI::Register(sol::state* lua) {
 			UINotification::GetInstance()->Clear();
 		}
 	);
+	uiTable.set_function("ResetWipes",
+		[] {
+			CWipeManager::GetInstance()->ResetWipes();
+		}
+	);
 }

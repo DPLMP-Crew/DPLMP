@@ -2,7 +2,9 @@
 
 void LuaHooks::Register(sol::state* lua, LuaScheduler* scheduler) {
 
-	m_LocalPlayerDeadCallback = std::make_unique<LuaCallback>(scheduler, lua);
+	for (int i = 0; i < HookType::Count; i++) {
+		m_Callbacks[i] = std::make_unique<LuaCallback>(scheduler, lua);
+	}
 
 	sol::table hooksTable = lua->create_named_table("Hooks");
 
@@ -10,11 +12,8 @@ void LuaHooks::Register(sol::state* lua, LuaScheduler* scheduler) {
 
 	hooksTable.set_function("AddHook",
 		[this](int hookType, sol::function fn) {
-			switch (hookType) {
-				case HookType::OnLocalPlayerDead:
-					m_LocalPlayerDeadCallback->AddCallback(fn);
-				break;
-			}
+			if (hookType >= HookType::Count) return;
+			m_Callbacks[hookType]->AddCallback(fn);
 		}
 	);
 }

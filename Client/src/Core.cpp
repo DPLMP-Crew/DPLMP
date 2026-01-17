@@ -219,27 +219,25 @@ namespace Core {
 			DebugFrameUpdate();
 		}
 
-		CCharacter* playerCharacter = GetPlayerCharacter();
+		if (Lua != nullptr) {
+			CCharacter* playerCharacter = GetPlayerCharacter();
 
-		if (playerCharacter != nullptr) {
-			if (playerCharacter->GetHealth() > 0.0f)
-			{
-				PlayerDead = false;
-			}
-			else
-			{
-				if (!PlayerDead) {
-					if (Lua != nullptr)
-					{
+			if (playerCharacter != nullptr) {
+				if (playerCharacter->GetHealth() > 0.0f)
+				{
+					PlayerDead = false;
+				}
+				else
+				{
+					if (!PlayerDead) {
 						Lua->m_LuaHooks.FireHook(HookType::OnLocalPlayerDead);
+						PlayerDead = true;
 					}
-					PlayerDead = true;
 				}
 			}
-		}
-
-		if (Lua!= nullptr)
+			Lua->m_LuaHooks.FireHook(HookType::OnFrameUpdate, DeltaTime);
 			Lua->Update(DeltaTime);
+		}
 	}
 	
 	static void DoLookAtCam() {

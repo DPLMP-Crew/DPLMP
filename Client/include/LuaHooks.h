@@ -3,7 +3,9 @@
 #include "LuaCallback.h"
 
 enum HookType {
-	OnLocalPlayerDead = 0
+	OnLocalPlayerDead,
+	OnFrameUpdate,
+	Count
 };
 
 class LuaHooks {
@@ -11,12 +13,9 @@ public:
 	void Register(sol::state* lua, LuaScheduler* scheduler);
 	template <typename... Args>
 	void FireHook(HookType hook, Args&&... args) {
-		switch (hook) {
-		case HookType::OnLocalPlayerDead:
-			m_LocalPlayerDeadCallback->Fire(std::forward<Args>(args)...);
-			break;
-		}
+		if (hook >= HookType::Count) return;
+		m_Callbacks[hook]->Fire(std::forward<Args>(args)...);
 	}
 private:
-	std::unique_ptr<LuaCallback> m_LocalPlayerDeadCallback;
+	std::unique_ptr<LuaCallback> m_Callbacks[HookType::Count];
 };
