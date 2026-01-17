@@ -9,6 +9,7 @@ void LuaHooks::Register(sol::state* lua, LuaScheduler* scheduler) {
 	sol::table hooksTable = lua->create_named_table("Hooks");
 
 	hooksTable["OnLocalPlayerDead"] = HookType::OnLocalPlayerDead;
+	hooksTable["OnFrameUpdate"] = HookType::OnFrameUpdate;
 
 	hooksTable.set_function("AddHook",
 		[this](int hookType, sol::function fn) {
