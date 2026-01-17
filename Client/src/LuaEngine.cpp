@@ -1,6 +1,7 @@
 #include "LuaEngine.h"
 #include <fstream>
 #include <filesystem>
+#include <windows.h>
 
 namespace LuaUI {
 	void Register(LuaEngine* lua);
@@ -11,7 +12,7 @@ LuaEngine::LuaEngine() {
 	LuaUI::Register(this);
 }
 
-void LuaEngine::RunScriptFromFile(const wchar_t* filename) {
+void LuaEngine::RunScriptFromFile(const std::wstring& filename) {
 	std::string finalText;
 	std::ifstream file(filename);
 
@@ -27,5 +28,28 @@ void LuaEngine::RunScriptFromFile(const wchar_t* filename) {
 
 	file.close();
 
-	m_LuaState.script(finalText, "script", sol::load_mode::text);
+	std::string result("<invalid script name>");
+	
+	if (!filename.empty()) {
+		int size = WideCharToMultiByte(
+			CP_UTF8, 0,
+			filename.data(), filename.size(),
+			nullptr, 0,
+			nullptr, nullptr
+		);
+
+		if (size > 0)
+		{
+			result = std::string(size, '\0');
+
+			WideCharToMultiByte(
+				CP_UTF8, 0,
+				filename.data(), filename.size(),
+				result.data(), size,
+				nullptr, nullptr
+			);
+		}
+	}
+
+	m_LuaState.script(finalText, result, sol::load_mode::text);
 }

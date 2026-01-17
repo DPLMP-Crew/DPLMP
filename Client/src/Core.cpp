@@ -96,13 +96,14 @@ namespace Core {
 
 	static void* __fastcall CStateGameRunning_Hook(void* cState) {
 		void* retVal = cStateGameRunningHook.thiscall<void*>(cState);
-		CLifeEventDataManager::GetInstance()->EndAllLifeEvents();
+		if (!EnableNormalGameLoop)
+			CLifeEventDataManager::GetInstance()->EndAllLifeEvents();
 		printf("Starting up Lua virtual machine.\n");
 		Lua = std::make_unique<LuaEngine>();
 		if (DeveloperMode)
 		{
 			std::wstring luaScriptPath = Directory + L"\\data\\scripts\\dev.lua";
-			Lua->RunScriptFromFile(luaScriptPath.c_str());
+			Lua->RunScriptFromFile(luaScriptPath);
 		}
 		return retVal;
 	}
@@ -327,9 +328,10 @@ namespace Core {
 			getForcedLevelHook = safetyhook::create_inline(0x46746d, GetForcedLevel_Hook);
 			// Stub out CStatusControlNode::OnEnable to disable life events.
 			nodeOnEnableHook = safetyhook::create_inline(0x48719a, Stub_Hook);
-			// hook into Game Running state constructor to stop all life events.
-			cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
 		}
+
+		// hook into Game Running state constructor to stop all life events.
+		cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
 
 		if (!EnableTraffic) {
 			// REMOVE TRAFFIC HOOKS
