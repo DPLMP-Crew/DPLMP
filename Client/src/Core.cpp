@@ -20,6 +20,7 @@
 #include "dpl/CLifeSystem.h"
 #include "mathutil.h"
 #include "dpl/CWipeManager.h"
+#include "LuaEngine.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -39,6 +40,7 @@ namespace Core {
 	static SafetyHookInline characterStepRenderingOptionsHook{};
 	static SafetyHookInline handlePlayerDeadHook{};
 	static SafetyHookInline setCameraMatrixHook{};
+	static SafetyHookInline inputManagerStepHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -46,7 +48,14 @@ namespace Core {
 	static bool EnableCopTraffic = false;
 	static int DeveloperEra = ERA_THEN;
 
+	static LuaEngine Lua;
+
 	std::wstring Directory;
+	bool PlayerSpawned = true;
+
+	bool IsGamePaused() {
+		return (((char*)0x6e73e2)[0] == 1);
+	}
 
 	static int __stdcall GetForcedLevel_Hook()
 	{
@@ -59,6 +68,12 @@ namespace Core {
 				return 7;
 		}
 		return 24;
+	}
+
+	static void __fastcall InputManager_Step_Hook(void* me) {
+		//if (IsGamePaused()) return;
+		if (!PlayerSpawned) return;
+		inputManagerStepHook.thiscall(me);
 	}
 
 	static void __fastcall HandlePlayerDead_Hook(void* me) {
@@ -81,6 +96,13 @@ namespace Core {
 	static void* __fastcall CStateGameRunning_Hook(void* cState) {
 		void* retVal = cStateGameRunningHook.thiscall<void*>(cState);
 		CLifeEventDataManager::GetInstance()->EndAllLifeEvents();
+		printf("Starting up Lua virtual machine.\n");
+		Lua = LuaEngine{};
+		if (DeveloperMode)
+		{
+			std::wstring luaScriptPath = Directory + L"\\data\\scripts\\dev.lua";
+			Lua.RunScriptFromFile(luaScriptPath.c_str());
+		}
 		return retVal;
 	}
 
@@ -331,6 +353,11 @@ namespace Core {
 		handlePlayerDeadHook = safetyhook::create_inline(0x45b315, HandlePlayerDead_Hook);
 
 		setCameraMatrixHook = safetyhook::create_inline(0x55a646, SetCameraMatrix_Hook);
+
+		inputManagerStepHook = safetyhook::create_inline(0x574a24, InputManager_Step_Hook);
+
+		// Don't freeze game while paused.
+		//Nop((BYTE*)0x45ac8c, 2);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.

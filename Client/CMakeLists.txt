@@ -51,6 +51,6 @@ target_link_libraries(DPLMPClient PRIVATE
     d3d9
     d3dx9
     glm
-    lua
+    lua::lua
     sol2
 )

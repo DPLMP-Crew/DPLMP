@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.30)
 project(DPLMP LANGUAGES C CXX)
 set(FETCHCONTENT_QUIET OFF CACHE BOOL "Verbose FetchContent" FORCE)
 
