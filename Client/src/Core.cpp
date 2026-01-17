@@ -40,7 +40,7 @@ namespace Core {
 	static SafetyHookInline characterStepRenderingOptionsHook{};
 	static SafetyHookInline handlePlayerDeadHook{};
 	static SafetyHookInline setCameraMatrixHook{};
-	static SafetyHookInline inputManagerStepHook{};
+	static SafetyHookInline inputManagerGetInputHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -48,7 +48,7 @@ namespace Core {
 	static bool EnableCopTraffic = false;
 	static int DeveloperEra = ERA_THEN;
 
-	static LuaEngine Lua;
+	static std::unique_ptr<LuaEngine> Lua;
 
 	std::wstring Directory;
 	bool PlayerSpawned = true;
@@ -70,10 +70,10 @@ namespace Core {
 		return 24;
 	}
 
-	static void __fastcall InputManager_Step_Hook(void* me) {
-		//if (IsGamePaused()) return;
-		if (!PlayerSpawned) return;
-		inputManagerStepHook.thiscall(me);
+	static float __fastcall InputManager_GetInput_Hook(void* me, void* unk) {
+		if (IsGamePaused()) return 0.0f;
+		if (!PlayerSpawned) return 0.0f;
+		return inputManagerGetInputHook.fastcall<float>(me, unk);
 	}
 
 	static void __fastcall HandlePlayerDead_Hook(void* me) {
@@ -97,11 +97,11 @@ namespace Core {
 		void* retVal = cStateGameRunningHook.thiscall<void*>(cState);
 		CLifeEventDataManager::GetInstance()->EndAllLifeEvents();
 		printf("Starting up Lua virtual machine.\n");
-		Lua = LuaEngine{};
+		Lua = std::make_unique<LuaEngine>();
 		if (DeveloperMode)
 		{
 			std::wstring luaScriptPath = Directory + L"\\data\\scripts\\dev.lua";
-			Lua.RunScriptFromFile(luaScriptPath.c_str());
+			Lua->RunScriptFromFile(luaScriptPath.c_str());
 		}
 		return retVal;
 	}
@@ -354,10 +354,10 @@ namespace Core {
 
 		setCameraMatrixHook = safetyhook::create_inline(0x55a646, SetCameraMatrix_Hook);
 
-		inputManagerStepHook = safetyhook::create_inline(0x574a24, InputManager_Step_Hook);
+		inputManagerGetInputHook = safetyhook::create_inline(0x574826, InputManager_GetInput_Hook);
 
 		// Don't freeze game while paused.
-		//Nop((BYTE*)0x45ac8c, 2);
+		Nop((BYTE*)0x45ac8c, 2);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.

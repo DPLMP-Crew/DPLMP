@@ -3,7 +3,6 @@
 #include <filesystem>
 
 LuaEngine::LuaEngine() {
-	m_LuaState = sol::state{};
 	m_LuaState.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::coroutine, sol::lib::math, sol::lib::package, sol::lib::string, sol::lib::table, sol::lib::utf8);
 }
 
