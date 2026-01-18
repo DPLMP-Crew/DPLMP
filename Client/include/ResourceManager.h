@@ -12,6 +12,7 @@ class ResourceManager {
 public:
 	void Acquire(SpooledPackageType package, int id);
 	void Release(SpooledPackageType package, int id);
+	bool IsLoaded(SpooledPackageType package, int id);
 
 private:
 	std::unordered_map<uint64_t, ResourceHandle> m_Handles;

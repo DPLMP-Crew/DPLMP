@@ -49,3 +49,8 @@ void ResourceManager::Release(SpooledPackageType package, int id) {
 		printf("Tried to free resource that wasn't acquired!\n");
 	}
 }
+
+bool ResourceManager::IsLoaded(SpooledPackageType package, int id) {
+	SpoolableResourceManager* spool = SpoolableResourceManager::GetInstance();
+	return spool->IsEntityLoaded(package, id);
+}
