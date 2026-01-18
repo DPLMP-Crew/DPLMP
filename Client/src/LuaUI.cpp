@@ -8,16 +8,8 @@ void LuaUI::Register(sol::state* lua) {
 		[](const std::string& text, float duration, bool fadeOut) {
 			UINotification* uiNotif = UINotification::GetInstance();
 			if (uiNotif == nullptr) return;
-			uiNotif->Clear();
 			UINotification::SetCustomString(text.c_str());
 			uiNotif->Show(0, 0, 137, duration, fadeOut);
-		}
-	);
-	uiTable.set_function("ClearNotification",
-		[] {
-			UINotification* uiNotif = UINotification::GetInstance();
-			if (uiNotif == nullptr) return;
-			uiNotif->Clear();
 		}
 	);
 	uiTable.set_function("ResetWipes",

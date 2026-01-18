@@ -365,7 +365,7 @@ namespace Core {
 		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
 
 		// Called every frame.
-		frameUpdateHook = safetyhook::create_inline(0x5ec01f, FrameUpdate_Hook);
+		frameUpdateHook = safetyhook::create_inline(0x45ac50, FrameUpdate_Hook);
 
 		if (!EnableNormalGameLoop) {
 			// Force in-game.
