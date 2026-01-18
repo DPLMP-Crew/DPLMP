@@ -5,7 +5,7 @@
 
 class Slot {
 public:
-	uint32_t m_Generation = 0;
+	uint32_t m_Generation = 1;
 	bool m_Alive = false;
 };
 

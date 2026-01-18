@@ -18,6 +18,7 @@ void LuaScheduler::Update(float delta) {
 		}
 		else
 		{
+			m_IdManager.Release(task->m_Id);
 			it = m_Tasks.erase(it);
 		}
 	}
