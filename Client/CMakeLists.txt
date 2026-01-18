@@ -39,6 +39,7 @@ target_sources(DPLMPClient
         src/LuaScheduler.cpp
         src/LuaInput.cpp
         src/LuaCore.cpp
+        src/IdManager.cpp
 )
 
 target_include_directories(DPLMPClient
