@@ -341,3 +341,8 @@ int CCharacter::GetDeadState() {
 void CCharacter::SetDeadState(int set) {
 	((int*)(this + 0x644))[0] = set;
 }
+
+void CCharacter::SwapSkin(int animations, int skin)
+{
+	((void(__thiscall*)(CCharacter*, int, int))0x4eb4fc)(this, animations, skin);
+}

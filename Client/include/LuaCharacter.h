@@ -14,6 +14,7 @@ public:
 	float GetHealth();
 	std::tuple<float, float, float> GetPosition();
 	std::tuple<float, float, float, float> GetRotation();
+	void SwapSkin(int animations, int skin);
 	CCharacter* m_Handle;
 };
 

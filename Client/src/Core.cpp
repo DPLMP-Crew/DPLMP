@@ -56,6 +56,7 @@ namespace Core {
 	std::wstring Directory;
 	bool PlayerSpawned = true;
 	float DeltaTime = 0.0;
+	std::unique_ptr<ResourceManager> ResourceMgr;
 
 	static bool PlayerDead = false;
 
@@ -105,6 +106,8 @@ namespace Core {
 			CLifeEventDataManager::GetInstance()->EndAllLifeEvents();
 		printf("Starting up Lua virtual machine.\n");
 		Lua = std::make_unique<LuaEngine>();
+		printf("Starting up ResourceManager.\n");
+		ResourceMgr = std::make_unique<ResourceManager>();
 		if (DeveloperMode)
 		{
 			std::wstring luaScriptPath = Directory + L"\\data\\scripts\\dev.lua";

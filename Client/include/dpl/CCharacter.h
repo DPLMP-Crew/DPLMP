@@ -122,6 +122,8 @@ public:
 	int GetDeadState();
 	void SetDeadState(int set);
 
+	void SwapSkin(int animations, int skin);
+
 	// actually no clue
 	float GetAlpha();
 	void SetAlpha(float alpha);

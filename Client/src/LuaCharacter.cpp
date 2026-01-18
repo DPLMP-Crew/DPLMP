@@ -4,6 +4,7 @@
 #include "dpl/CPlayerDriverBehaviour.h"
 #include "dpl/CWipeManager.h"
 #include "mathutil.h"
+#include "Core.h"
 
 static CCharacter* GetPlayerCharacter() {
 	CLifeSystem* lifeSystem = CLifeSystem::GetInstance();
@@ -66,6 +67,12 @@ std::tuple<float, float, float> GameCharacter::GetPosition() {
 	return { pos.X, pos.Y, pos.Z };
 }
 
+void GameCharacter::SwapSkin(int animations, int skin) {
+	Core::ResourceMgr->Acquire(SpooledPackageType::Characters, skin);
+	Core::ResourceMgr->Release(SpooledPackageType::Characters, m_Handle->GetModel());
+	m_Handle->SwapSkin(animations, skin);
+}
+
 void LuaCharacter::Register(sol::state* lua) {
 
 	sol::usertype<GameCharacter> characterType = lua->new_usertype<GameCharacter>(
@@ -77,7 +84,8 @@ void LuaCharacter::Register(sol::state* lua) {
 		"SetHealth", &GameCharacter::SetHealth,
 		"GetHealth", &GameCharacter::GetHealth,
 		"GetPosition", &GameCharacter::GetPosition,
-		"GetRotation", &GameCharacter::GetRotation
+		"GetRotation", &GameCharacter::GetRotation,
+		"SwapSkin", &GameCharacter::SwapSkin
 	);
 
 	sol::table charManagerTable = lua->create_named_table("CharacterManager");
