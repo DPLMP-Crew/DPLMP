@@ -29,6 +29,7 @@ public:
 		}
 		return Id64();
 	}
+	void AbortTask(Id64 taskId);
 
 private:
 	std::vector<std::unique_ptr<LuaTask>> m_Tasks;

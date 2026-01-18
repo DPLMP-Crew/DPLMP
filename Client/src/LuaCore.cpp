@@ -10,6 +10,11 @@ void LuaCore::Register(sol::state* lua, LuaScheduler* scheduler) {
 			return scheduler->AddTask(std::move(co), std::move(thread), args).m_Value;
 		}
 	);
+	coreTable.set_function("AbortCoroutine",
+		[scheduler](uint64_t id) {
+			scheduler->AbortTask(Id64(id));
+		}
+	);
 	coreTable.set(
 		"DeltaTime",
 		sol::readonly_property([]() -> float {

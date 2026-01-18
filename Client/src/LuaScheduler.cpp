@@ -23,3 +23,15 @@ void LuaScheduler::Update(float delta) {
 		}
 	}
 }
+
+void LuaScheduler::AbortTask(Id64 taskId) {
+	for (auto it = m_Tasks.begin(); it != m_Tasks.end(); ) {
+		std::unique_ptr<LuaTask>& task = *it;
+		if (task->m_Id.m_Value == taskId.m_Value)
+		{
+			m_IdManager.Release(task->m_Id);
+			it = m_Tasks.erase(it);
+			return;
+		}
+	}
+}

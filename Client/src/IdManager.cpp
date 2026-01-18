@@ -20,5 +20,7 @@ void IdManager::Release(Id64 id) {
 	Slot& slot = m_Slots[id.Index()];
 	slot.m_Alive = false;
 	slot.m_Generation++;
+	if (slot.m_Generation <= 0)
+		slot.m_Generation = 1;
 	m_FreeIndices.push_back(id.Index());
 }
