@@ -13,6 +13,7 @@ LuaEngine::LuaEngine() {
 	m_LuaUI.Register(&m_LuaState);
 	m_LuaHooks.Register(&m_LuaState, &m_Scheduler);
 	m_LuaInput.Register(&m_LuaState);
+	m_LuaCore.Register(&m_LuaState, &m_Scheduler);
 }
 
 void LuaEngine::RunScriptFromFile(const std::wstring& filename) {
