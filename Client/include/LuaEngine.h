@@ -6,6 +6,7 @@
 #include "LuaUI.h"
 #include "LuaInput.h"
 #include "LuaCore.h"
+#include "LuaCharacter.h"
 
 class LuaEngine {
 public:
@@ -19,4 +20,5 @@ public:
 	LuaUI m_LuaUI;
 	LuaInput m_LuaInput;
 	LuaCore m_LuaCore;
+	LuaCharacter m_LuaCharacter;
 };

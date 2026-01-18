@@ -4,6 +4,7 @@
 #include "dpl/Vector.h"
 #include "dpl/Vector4.h"
 #include "dpl/Matrix.h"
+#include <glm/gtc/quaternion.hpp>
 
 #define VEC3_RIGHT glm::vec3(1.0, 0.0, 0.0)
 #define VEC3_UP glm::vec3(0.0, 1.0, 0.0)

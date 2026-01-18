@@ -1,0 +1,64 @@
+#include "LuaCharacter.h"
+#include "dpl/CLifeSystem.h"
+#include "dpl/CLifePlayer.h"
+#include "dpl/CPlayerDriverBehaviour.h"
+#include "dpl/CWipeManager.h"
+#include "mathutil.h"
+
+static CCharacter* GetPlayerCharacter() {
+	CLifeSystem* lifeSystem = CLifeSystem::GetInstance();
+	if (lifeSystem == nullptr) return nullptr;
+	CLifePlayer* lifePlayer = lifeSystem->GetPlayer();
+	if (lifePlayer == nullptr) return nullptr;
+	CPlayerDriverBehaviour* bhav = lifePlayer->GetDriverBehaviour();
+	if (bhav == nullptr) return nullptr;
+	CCharacter* ch = bhav->GetCharacter();
+	return ch;
+}
+
+void GameCharacter::Revive() {
+	m_Handle->SetHealth(1.0f);
+	m_Handle->ForceIdleMode();
+	m_Handle->SetDeadState(0);
+
+	CCharacter* player = GetPlayerCharacter();
+
+	if (player == m_Handle)
+		CWipeManager::GetInstance()->ResetWipes();
+}
+
+void GameCharacter::SetPosition(float x, float y, float z) {
+	Vector4 pos(x, y, z, 1.0);
+	m_Handle->SetPosition(&pos);
+}
+
+void GameCharacter::SetRotation(float x, float y, float z, float w) {
+	Vector4 pos;
+	m_Handle->GetPosition(&pos);
+
+	glm::vec3 newPos = glm::vec3(pos.X, pos.Y, pos.Z);
+	glm::quat newRot = glm::quat(w, x, y, z);
+
+	glm::mat4 tf = glm::translate(glm::mat4(1.0f), newPos) * glm::mat4_cast(newRot);
+
+	Matrix* charMatrix = m_Handle->GetMatrix();
+
+	*charMatrix = fromGLM(tf);
+}
+
+void LuaCharacter::Register(sol::state* lua) {
+	sol::usertype<GameCharacter> characterType = lua->new_usertype<GameCharacter>(
+		"Character",
+		sol::no_constructor,
+		"Revive", &GameCharacter::Revive,
+		"SetPosition", &GameCharacter::SetPosition,
+		"SetRotation", &GameCharacter::SetRotation
+	);
+
+	sol::table charManagerTable = lua->create_named_table("CharacterManager");
+	charManagerTable.set_function("GetPlayerCharacter",
+		[]() {
+			return GameCharacter(GetPlayerCharacter());
+		}
+	);
+}
