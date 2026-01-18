@@ -11,8 +11,9 @@ public:
 	template <typename... Args>
 	void Fire(Args&&... args) {
 		for (int i = 0; i < m_Functions.size(); i++) {
-			sol::coroutine co(m_Functions[i]);
-			m_Scheduler->AddTask(co, std::forward<Args>(args)...);
+			sol::thread thread = sol::thread::create(m_LuaState->lua_state());
+			sol::coroutine co(thread.thread_state(), m_Functions[i]);
+			m_Scheduler->AddTask(std::move(co), std::move(thread), std::forward<Args>(args)...);
 		}
 	}
 	void AddCallback(sol::function callback);

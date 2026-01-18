@@ -3,8 +3,8 @@
 
 class LuaTask {
 public:
-	sol::coroutine m_Coroutine;
 	sol::thread m_Thread;
+	sol::coroutine m_Coroutine;
 	float m_Remaining;
 };
 
@@ -17,8 +17,8 @@ public:
 		if (result.status() == sol::call_status::yielded) {
 			float wait = result.get<float>();
 			LuaTask task;
-			task.m_Coroutine = std::move(co);
 			task.m_Thread = std::move(thread);
+			task.m_Coroutine = std::move(co);
 			task.m_Remaining = wait;
 			m_Tasks.emplace_back(std::move(task));
 		}
