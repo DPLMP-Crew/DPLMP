@@ -13,7 +13,7 @@ void UINotification::Show(int unk, int unk2, int stringId, float duration, bool 
 }
 
 void UINotification::Clear() {
-	((void(__thiscall*)(UINotification*))0x472DA2)(this);
+	((void(__thiscall*)(UINotification*))0x472759)(this);
 }
 
 void UINotification::SetCustomString(const char* str) {

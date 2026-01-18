@@ -9,7 +9,15 @@ void LuaUI::Register(sol::state* lua) {
 			UINotification* uiNotif = UINotification::GetInstance();
 			if (uiNotif == nullptr) return;
 			UINotification::SetCustomString(text.c_str());
+			uiNotif->Clear();
 			uiNotif->Show(0, 0, 137, duration, fadeOut);
+		}
+	);
+	uiTable.set_function("ClearNotification",
+		[]() {
+			UINotification* uiNotif = UINotification::GetInstance();
+			if (uiNotif == nullptr) return;
+			uiNotif->Clear();
 		}
 	);
 	uiTable.set_function("ResetWipes",
