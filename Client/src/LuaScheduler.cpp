@@ -2,18 +2,18 @@
 
 void LuaScheduler::Update(float delta) {
 	for (auto it = m_Tasks.begin(); it != m_Tasks.end(); ) {
-		LuaTask& task = *it;
-		task.m_Remaining -= delta;
+		std::unique_ptr<LuaTask>& task = *it;
+		task->m_Remaining -= delta;
 
-		if (task.m_Remaining > 0.0f) {
+		if (task->m_Remaining > 0.0f) {
 			++it;
 			continue;
 		}
 
-		sol::protected_function_result result = task.m_Coroutine();
+		sol::protected_function_result result = task->m_Coroutine();
 
-		if (task.m_Coroutine.status() == sol::call_status::yielded) {
-			task.m_Remaining = result.get<float>();
+		if (task->m_Coroutine.status() == sol::call_status::yielded) {
+			task->m_Remaining = result.get<float>();
 			++it;
 		}
 		else

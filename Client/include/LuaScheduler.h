@@ -16,14 +16,14 @@ public:
 		sol::protected_function_result result = co(std::forward<Args>(args)...);
 		if (result.status() == sol::call_status::yielded) {
 			float wait = result.get<float>();
-			LuaTask task;
-			task.m_Thread = std::move(thread);
-			task.m_Coroutine = std::move(co);
-			task.m_Remaining = wait;
+			std::unique_ptr task = std::make_unique<LuaTask>();
+			task->m_Thread = std::move(thread);
+			task->m_Coroutine = std::move(co);
+			task->m_Remaining = wait;
 			m_Tasks.emplace_back(std::move(task));
 		}
 	}
 
 private:
-	std::vector<LuaTask> m_Tasks;
+	std::vector<std::unique_ptr<LuaTask>> m_Tasks;
 };
