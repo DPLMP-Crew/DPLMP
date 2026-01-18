@@ -5,7 +5,4 @@
 class LuaCore {
 public:
 	void Register(sol::state* lua, LuaScheduler* scheduler);
-
-private:
-	LuaScheduler* m_Scheduler;
 };

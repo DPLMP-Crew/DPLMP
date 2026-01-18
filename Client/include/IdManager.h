@@ -1,6 +1,7 @@
 #pragma once
 #include "Id64.h"
 #include <vector>
+#include <cstdint>
 
 class Slot {
 public:
