@@ -37,7 +37,7 @@ void GameCharacter::SetRotation(float x, float y, float z, float w) {
 	m_Handle->GetPosition(&pos);
 
 	glm::vec3 newPos = glm::vec3(pos.X, pos.Y, pos.Z);
-	glm::quat newRot = glm::quat(w, x, y, z);
+	glm::quat newRot = glm::normalize(glm::quat(w, x, y, z));
 
 	glm::mat4 tf = glm::translate(glm::mat4(1.0f), newPos) * glm::mat4_cast(newRot);
 
@@ -46,16 +46,42 @@ void GameCharacter::SetRotation(float x, float y, float z, float w) {
 	*charMatrix = fromGLM(tf);
 }
 
+void GameCharacter::SetHealth(float health) {
+	m_Handle->SetHealth(health);
+}
+
+float GameCharacter::GetHealth() {
+	return m_Handle->GetHealth();
+}
+
+std::tuple<float, float, float, float> GameCharacter::GetRotation() {
+	Matrix* charMatrix = m_Handle->GetMatrix();
+	glm::quat glmQuat = glm::quat_cast(toGLM(*charMatrix));
+	return { glmQuat.x, glmQuat.y, glmQuat.z, glmQuat.w };
+}
+
+std::tuple<float, float, float> GameCharacter::GetPosition() {
+	Vector4 pos;
+	m_Handle->GetPosition(&pos);
+	return { pos.X, pos.Y, pos.Z };
+}
+
 void LuaCharacter::Register(sol::state* lua) {
+
 	sol::usertype<GameCharacter> characterType = lua->new_usertype<GameCharacter>(
 		"Character",
 		sol::no_constructor,
 		"Revive", &GameCharacter::Revive,
 		"SetPosition", &GameCharacter::SetPosition,
-		"SetRotation", &GameCharacter::SetRotation
+		"SetRotation", &GameCharacter::SetRotation,
+		"SetHealth", &GameCharacter::SetHealth,
+		"GetHealth", &GameCharacter::GetHealth,
+		"GetPosition", &GameCharacter::GetPosition,
+		"GetRotation", &GameCharacter::GetRotation
 	);
 
 	sol::table charManagerTable = lua->create_named_table("CharacterManager");
+
 	charManagerTable.set_function("GetPlayerCharacter",
 		[]() {
 			return GameCharacter(GetPlayerCharacter());

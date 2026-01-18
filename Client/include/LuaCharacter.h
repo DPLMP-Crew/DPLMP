@@ -10,6 +10,10 @@ public:
 	void Revive();
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float x, float y, float z, float w);
+	void SetHealth(float health);
+	float GetHealth();
+	std::tuple<float, float, float> GetPosition();
+	std::tuple<float, float, float, float> GetRotation();
 	CCharacter* m_Handle;
 };
 
