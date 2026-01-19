@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "ResourceManager.h"
+#include "VehicleSpawner.h"
 #include <memory>
 
 namespace Core {
@@ -8,6 +9,7 @@ namespace Core {
 	extern bool PlayerSpawned;
 	extern float DeltaTime;
 	extern std::unique_ptr<ResourceManager> ResourceMgr;
+	extern std::unique_ptr<VehicleSpawner> VehSpawner;
 	void Initialize();
 	bool IsGamePaused();
 }

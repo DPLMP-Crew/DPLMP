@@ -57,6 +57,7 @@ namespace Core {
 	bool PlayerSpawned = true;
 	float DeltaTime = 0.0;
 	std::unique_ptr<ResourceManager> ResourceMgr;
+	std::unique_ptr<VehicleSpawner> VehSpawner;
 
 	static bool PlayerDead = false;
 
@@ -108,6 +109,8 @@ namespace Core {
 		Lua = std::make_unique<LuaEngine>();
 		printf("Starting up ResourceManager.\n");
 		ResourceMgr = std::make_unique<ResourceManager>();
+		printf("Starting up VehicleSpawner.\n");
+		VehSpawner = std::make_unique<VehicleSpawner>();
 		if (DeveloperMode)
 		{
 			std::wstring luaScriptPath = Directory + L"\\data\\scripts\\dev.lua";
@@ -149,6 +152,11 @@ namespace Core {
 
 		if (wasKeyJustPressed(VK_F5)) {
 			UINotification::SetCustomString("Car Spawned!");
+			UINotification::GetInstance()->Clear();
+			UINotification::GetInstance()->Show(0, 0, 999, 5.0f, true);
+			VehSpawner->RequestVehicle(tVehicleModelUID::tVehicleModelUID_Andec, 2465.992f, 39.996f, -4370.734f, 0.0f, true);
+			/*
+			UINotification::SetCustomString("Car Spawned!");
 			UINotification::GetInstance()->Show(0, 0, 999, 5.0f, true);
 			printf("Creating a car!\n");
 			CVehicleManager* vmgr = CVehicleManager::GetInstance();
@@ -157,7 +165,7 @@ namespace Core {
 				vmgr->FreeVehicle(createdVehicle);
 			}
 			vmgr->CreateVehicle(createdVehicle, tVehicleModelUID::tVehicleModelUID_Andec, 2465.992f, 39.996f, -4370.734f, 1.0f, 0.0f, true, true, false);
-			amgr->AddVehicle(createdVehicle->m_pPointer, 1);
+			amgr->AddVehicle(createdVehicle->m_pPointer, 1);*/
 		}
 
 		if (wasKeyJustPressed(VK_F3))
@@ -240,6 +248,10 @@ namespace Core {
 			}
 			Lua->m_LuaHooks.FireHook(HookType::OnFrameUpdate, DeltaTime);
 			Lua->Update(DeltaTime);
+		}
+
+		if (VehSpawner != nullptr) {
+			VehSpawner->Update();
 		}
 	}
 	

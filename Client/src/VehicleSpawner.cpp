@@ -8,9 +8,8 @@ static CVehicle* SpawnVehicle(VehicleSpawnRequest* request) {
 
 	CVehicleManager* vehManager = CVehicleManager::GetInstance();
 	LifeAcquirableVehicleManager* lifeManager = LifeAcquirableVehicleManager::GetInstance();
-
 	vehManager->CreateVehicle(&createdVehicle, request->m_Model, request->m_X, request->m_Y, request->m_Z, 1.0f, request->m_Angle, request->m_SnapToGround, request->m_SnapToGround, false);
-	if (createdVehicle->m_pPointer != nullptr) {
+	if (createdVehicle.m_pPointer != nullptr) {
 		lifeManager->AddVehicle(createdVehicle.m_pPointer, 1);
 		request->m_State = VehicleSpawnState::Spawned;
 		request->m_Vehicle = createdVehicle.m_pPointer;
@@ -29,8 +28,8 @@ std::shared_ptr<VehicleSpawnRequest> VehicleSpawner::RequestVehicle(tVehicleMode
 
 	request->m_Model = tVehicle;
 	request->m_X = x;
-	request->m_Y = x;
-	request->m_Z = x;
+	request->m_Y = y;
+	request->m_Z = z;
 	request->m_Angle = angle;
 	request->m_SnapToGround = snapToGround;
 
