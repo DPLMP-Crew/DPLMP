@@ -7,6 +7,7 @@
 #include "LuaInput.h"
 #include "LuaCore.h"
 #include "LuaCharacter.h"
+#include "LuaVehicle.h"
 
 class LuaEngine {
 public:
@@ -21,4 +22,5 @@ public:
 	LuaInput m_LuaInput;
 	LuaCore m_LuaCore;
 	LuaCharacter m_LuaCharacter;
+	LuaVehicle m_LuaVehicle;
 };

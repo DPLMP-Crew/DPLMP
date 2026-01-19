@@ -15,6 +15,7 @@ LuaEngine::LuaEngine() {
 	m_LuaInput.Register(&m_LuaState);
 	m_LuaCore.Register(&m_LuaState, &m_Scheduler);
 	m_LuaCharacter.Register(&m_LuaState);
+	m_LuaVehicle.Register(&m_LuaState);
 }
 
 void LuaEngine::RunScriptFromFile(const std::wstring& filename) {
