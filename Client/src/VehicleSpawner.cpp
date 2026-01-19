@@ -62,6 +62,8 @@ void VehicleSpawner::DestroyVehicle(VehicleSpawnRequest* request) {
 	}
 	else if (request->m_State == VehicleSpawnState::Spawned) {
 		CVehicleManager* vehManager = CVehicleManager::GetInstance();
+		LifeAcquirableVehicleManager* lifeManager = LifeAcquirableVehicleManager::GetInstance();
+		lifeManager->RemoveVehicle(request->m_Vehicle);
 		Core::ResourceMgr->Release(SpooledPackageType::Vehicles, request->m_Model);
 		AutoPtr<CVehicle, int> deletedVehicle{};
 		deletedVehicle.m_pPointer = request->m_Vehicle;
