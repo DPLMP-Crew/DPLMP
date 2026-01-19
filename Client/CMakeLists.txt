@@ -42,6 +42,8 @@ target_sources(DPLMPClient
         src/IdManager.cpp
         src/LuaCharacter.cpp
         src/ResourceManager.cpp
+        src/LuaVehicle.cpp
+        src/VehicleSpawner.cpp
 )
 
 target_include_directories(DPLMPClient

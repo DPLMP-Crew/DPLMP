@@ -33,5 +33,9 @@ void LuaScheduler::AbortTask(Id64 taskId) {
 			it = m_Tasks.erase(it);
 			return;
 		}
+		else
+		{
+			++it;
+		}
 	}
 }
