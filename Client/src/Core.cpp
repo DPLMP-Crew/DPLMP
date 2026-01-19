@@ -28,16 +28,6 @@
 #define ERA_NOW 1
 #define ERA_THEN 0
 
-using CreateFileW_t = HANDLE(WINAPI*)(
-	LPCWSTR,
-	DWORD,
-	DWORD,
-	LPSECURITY_ATTRIBUTES,
-	DWORD,
-	DWORD,
-	HANDLE
-	);
-
 namespace Core {
 
 	static SafetyHookInline getForcedLevelHook{};
@@ -54,7 +44,6 @@ namespace Core {
 	static SafetyHookInline handlePlayerDeadHook{};
 	static SafetyHookInline setCameraMatrixHook{};
 	static SafetyHookInline inputManagerGetInputHook{};
-	static SafetyHookInline createFileWHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -87,54 +76,6 @@ namespace Core {
 				return 7;
 		}
 		return 24;
-	}
-
-	HANDLE WINAPI CreateFileW_Hook(
-		LPCWSTR lpFileName,
-		DWORD dwDesiredAccess,
-		DWORD dwShareMode,
-		LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-		DWORD dwCreationDisposition,
-		DWORD dwFlagsAndAttributes,
-		HANDLE hTemplateFile
-	) {
-		static std::wstring_view fontSuffix = L"FONTS\\FONT.BNK";
-		std::wstring newPath;
-
-		if (lpFileName) {
-			//std::wcout << L"[CreateFileW] " << lpFileName << std::endl;
-			std::wstring_view pathview{ lpFileName };
-			if (pathview.size() >= fontSuffix.size())
-			{
-				std::wstring_view check = pathview.substr(pathview.size() - fontSuffix.size());
-				bool matches = true;
-				for (size_t i = 0; i < fontSuffix.size(); i++) {
-					if (check[i] != fontSuffix[i])
-						matches = false;
-				}
-
-				if (matches)
-				{
-					/*
-					while (!IsDebuggerPresent()) {
-						Sleep(100);
-					}*/
-					newPath.append(pathview.substr(0, pathview.size() - fontSuffix.size()));
-					newPath.append(L"FONTS\\70S\\FONT.BNK");
-					lpFileName = newPath.c_str();
-				}
-			}
-		}
-
-		return createFileWHook.stdcall<CreateFileW_t>(
-			lpFileName,
-			dwDesiredAccess,
-			dwShareMode,
-			lpSecurityAttributes,
-			dwCreationDisposition,
-			dwFlagsAndAttributes,
-			hTemplateFile
-		);
 	}
 
 	static float __fastcall InputManager_GetInput_Hook(void* me, void* unk) {
@@ -482,19 +423,17 @@ namespace Core {
 		// Don't freeze game while paused.
 		Nop((BYTE*)0x45ac8c, 2);
 
-		HMODULE kernel32 = GetModuleHandleW(L"KernelBase.dll");
-		auto target = GetProcAddress(kernel32, "CreateFileW");
-
-		createFileWHook = safetyhook::create_inline(target, CreateFileW_Hook);
-
-		/*
 		static char thenFont[] = "LANG:FONTS\\70S\\FONT.BNK";
 		static char nowFont[] = "LANG:FONTS\\90S\\FONT.BNK";
 
-		char* fontPtr = thenFont;
+		char* fontPtr = nowFont;
+
+		if (DeveloperMode && DeveloperEra != ERA_NOW)
+			fontPtr = thenFont;
 
 		WriteToMemory((DWORD)0x45c30f, &fontPtr, 4);
-		WriteToMemory((DWORD)0x4a9491, &fontPtr, 4);*/
+		WriteToMemory((DWORD)0x4a9491, &fontPtr, 4);
+		WriteToMemory((DWORD)0x4a898c, &fontPtr, 4);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.
