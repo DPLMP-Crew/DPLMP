@@ -230,6 +230,10 @@ namespace Core {
 			DebugFrameUpdate();
 		}
 
+		if (VehSpawner != nullptr) {
+			VehSpawner->Update();
+		}
+
 		if (Lua != nullptr) {
 			CCharacter* playerCharacter = GetPlayerCharacter();
 
@@ -248,10 +252,6 @@ namespace Core {
 			}
 			Lua->m_LuaHooks.FireHook(HookType::OnFrameUpdate, DeltaTime);
 			Lua->Update(DeltaTime);
-		}
-
-		if (VehSpawner != nullptr) {
-			VehSpawner->Update();
 		}
 	}
 	
