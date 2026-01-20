@@ -89,6 +89,7 @@ namespace Core {
 			packet[1] = 0.0;
 			packet[2] = 0.0;
 		}*/
+		//printf("Sending manipulation packet 0: %f, 1: %f, 2: %f\n", packet[0], packet[1], packet[2]);
 		sendManipulationPacketHook.thiscall(me, packet);
 	}
 
@@ -98,7 +99,7 @@ namespace Core {
 			if (veh != nullptr) {
 				CHandling* handling = nullptr;
 				veh->GetHandling(&handling);
-				float manip[] = { 0.0, 0.0, 0.0 };
+				float manip[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 				handling->SendManipulationPacket(manip);
 			}
 			me->AquaticCollisionCheck();
