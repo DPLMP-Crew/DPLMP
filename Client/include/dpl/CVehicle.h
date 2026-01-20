@@ -1,6 +1,7 @@
 #pragma once
 
 class CCharacter;
+class CHandling;
 
 class CVehicle {
 public:
@@ -11,5 +12,5 @@ public:
 	void MakeInfiniteMass();
 	void Explode();
 	void Kaboom();
-
+	void GetHandling(CHandling** handling);
 };

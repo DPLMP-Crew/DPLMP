@@ -4,3 +4,7 @@ CCharacter* CPlayerDriverBehaviour::GetCharacter()
 {
     return *(CCharacter**)((int)this + 0x2C4);
 }
+
+void CPlayerDriverBehaviour::AquaticCollisionCheck() {
+    ((void(__thiscall*)(CPlayerDriverBehaviour*))0x4a25ab)(this);
+}

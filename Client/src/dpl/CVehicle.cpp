@@ -36,3 +36,8 @@ void CVehicle::Kaboom()
 {
 	((void(__thiscall*)(CVehicle*))0x59D417)(this);
 }
+
+void CVehicle::GetHandling(CHandling** handling) {
+	int vTableAddr = *(int*)this;
+	((void(__thiscall*)(CVehicle*, CHandling**)) * (int*)(vTableAddr + 0x64))(this, handling);
+}

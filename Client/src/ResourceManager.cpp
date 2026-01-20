@@ -46,7 +46,7 @@ void ResourceManager::Release(SpooledPackageType package, int id) {
 	}
 	else
 	{
-		printf("Tried to free resource that wasn't acquired!\n");
+		printf("Tried to free resource that wasn't acquired! (id %i, package %i)\n", id, package);
 	}
 }
 

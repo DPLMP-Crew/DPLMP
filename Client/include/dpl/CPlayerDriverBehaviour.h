@@ -4,4 +4,5 @@
 class CPlayerDriverBehaviour {
 public:
 	CCharacter* GetCharacter();
+	void AquaticCollisionCheck();
 };

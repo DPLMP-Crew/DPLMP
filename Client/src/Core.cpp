@@ -24,6 +24,7 @@
 #include "dpl/UINotification.h"
 #include <chrono>
 #include "LuaHooks.h"
+#include "dpl/CHandling.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -46,6 +47,7 @@ namespace Core {
 	static SafetyHookInline updateOverheadMapHook{};
 	static SafetyHookInline isCheatActiveHook{};
 	static SafetyHookInline playerDriverBehaviourStepHook{};
+	static SafetyHookInline sendManipulationPacketHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -80,12 +82,29 @@ namespace Core {
 		return 24;
 	}
 
-	static void __fastcall PlayerDriverBehaviour_Step_Hook(int* me) {
-		if (IsGamePaused()) return;
-		if (!PlayerSpawned) return;
-		((float*)(me + 0x308))[0] = 1.0;
+	static void __fastcall Handling_SendManipulationPacket_Hook(float* me, void* _, float* packet) {
+		/*
+		if (IsGamePaused() || !PlayerSpawned) {
+			packet[0] = 0.0;
+			packet[1] = 0.0;
+			packet[2] = 0.0;
+		}*/
+		sendManipulationPacketHook.thiscall(me, packet);
+	}
+
+	static void __fastcall PlayerDriverBehaviour_Step_Hook(CPlayerDriverBehaviour* me) {
+		if (IsGamePaused() || !PlayerSpawned) {
+			CVehicle* veh = me->GetCharacter()->GetVehicle();
+			if (veh != nullptr) {
+				CHandling* handling = nullptr;
+				veh->GetHandling(&handling);
+				float manip[] = { 0.0, 0.0, 0.0 };
+				handling->SendManipulationPacket(manip);
+			}
+			me->AquaticCollisionCheck();
+			return;
+		}
 		playerDriverBehaviourStepHook.thiscall(me);
-		((float*)(me + 0x308))[0] = 1.0;
 	}
 
 	static bool __fastcall IsCheatActive_Hook(void* me, void* _, int cheatId) {
@@ -438,6 +457,8 @@ namespace Core {
 
 		// No cheats ma'am
 		isCheatActiveHook = safetyhook::create_inline(0x4c2ab6, IsCheatActive_Hook);
+
+		sendManipulationPacketHook = safetyhook::create_inline(0x58cb57, Handling_SendManipulationPacket_Hook);
 		
 		// Don't freeze game while paused.
 		Nop((BYTE*)0x45ac8c, 2);
