@@ -48,6 +48,8 @@ namespace Core {
 	static SafetyHookInline isCheatActiveHook{};
 	static SafetyHookInline playerDriverBehaviourStepHook{};
 	static SafetyHookInline sendManipulationPacketHook{};
+	static SafetyHookInline pauseSoundManagerHook{};
+	static SafetyHookInline pauseMusicManagerHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -67,6 +69,14 @@ namespace Core {
 
 	bool IsGamePaused() {
 		return (((char*)0x6e73e2)[0] == 1);
+	}
+
+	static void __fastcall PauseMusicManager_Hook(void* me) {
+		return;
+	}
+
+	static void __fastcall PauseSoundManager_Hook(void* me) {
+		return;
 	}
 
 	static int __stdcall GetForcedLevel_Hook()
@@ -460,7 +470,18 @@ namespace Core {
 		isCheatActiveHook = safetyhook::create_inline(0x4c2ab6, IsCheatActive_Hook);
 
 		sendManipulationPacketHook = safetyhook::create_inline(0x58cb57, Handling_SendManipulationPacket_Hook);
+
+		// DONT PAUSE AUDIO IN PAUSE MENUS
 		
+		pauseSoundManagerHook = safetyhook::create_inline(0x4e24cf, PauseSoundManager_Hook);
+
+		pauseMusicManagerHook = safetyhook::create_inline(0x4e20eb, PauseMusicManager_Hook);
+
+		char jmp = 0xEB;
+		WriteToMemory((DWORD)0x45b7f5, &jmp, 1);
+
+		// END
+
 		// Don't freeze game while paused.
 		Nop((BYTE*)0x45ac8c, 2);
 
