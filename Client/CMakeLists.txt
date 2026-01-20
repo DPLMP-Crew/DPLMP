@@ -67,4 +67,5 @@ target_link_libraries(DPLMPClient PRIVATE
     lua::lua
     sol2
     xxHashStatic
+    d3dcompiler
 )

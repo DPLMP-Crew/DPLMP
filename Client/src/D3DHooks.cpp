@@ -4,6 +4,7 @@
 #include "d3dx9.h"
 #include "xxhash.h"
 #include "Core.h"
+#include "d3dcompiler.h"
 
 namespace D3DHooks {
 
@@ -29,8 +30,6 @@ namespace D3DHooks {
 
     static HRESULT __stdcall SetPixelShader_Hook(IDirect3DDevice9* device, IDirect3DPixelShader9* pShader) {
         if (ExtractMode) {
-            printf("YARR\n");
-
             XXH64_hash_t const seed = 0;
 
             UINT size;
@@ -41,14 +40,19 @@ namespace D3DHooks {
             code = malloc(size);
             pShader->GetFunction(code, &size);
 
+            ID3DBlob* dsm = nullptr;
+            D3DDisassemble(code, size, 0, "DPLMP", &dsm);
+
             XXH64_hash_t hash = XXH64(code, size, seed);
 
             std::wstring fileLoc = Core::Directory + L"\\" + std::to_wstring(hash) + L".ps";
 
             FILE* psF = _wfopen(fileLoc.c_str(), L"wb");
-            fwrite(code, 1, size, psF);
+            fwrite(dsm->GetBufferPointer(), 1, dsm->GetBufferSize() - 1, psF);
             fclose(psF);
 
+            dsm->Release();
+            dsm = nullptr;
             free(code);
         }
         return setPixelShaderHook.stdcall<HRESULT>(device, pShader);
