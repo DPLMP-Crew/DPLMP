@@ -44,6 +44,7 @@ namespace Core {
 	static SafetyHookInline handlePlayerDeadHook{};
 	static SafetyHookInline setCameraMatrixHook{};
 	static SafetyHookInline inputManagerGetInputHook{};
+	static SafetyHookInline updateOverheadMapHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -76,6 +77,11 @@ namespace Core {
 				return 7;
 		}
 		return 24;
+	}
+
+	static void __fastcall UpdateOverheadMap_Hook(void* me) {
+		if (IsGamePaused()) return;
+		updateOverheadMapHook.thiscall(me);
 	}
 
 	static float __fastcall InputManager_GetInput_Hook(void* me, void* unk) {
@@ -420,6 +426,9 @@ namespace Core {
 
 		inputManagerGetInputHook = safetyhook::create_inline(0x574826, InputManager_GetInput_Hook);
 
+		// TODO: maybe only disable the follow player code, so we get realtime changes while in TAB map
+		updateOverheadMapHook = safetyhook::create_inline(0x4730f1, UpdateOverheadMap_Hook);
+		
 		// Don't freeze game while paused.
 		Nop((BYTE*)0x45ac8c, 2);
 
