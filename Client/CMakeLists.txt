@@ -66,4 +66,5 @@ target_link_libraries(DPLMPClient PRIVATE
     glm
     lua::lua
     sol2
+    xxHashStatic
 )

@@ -50,11 +50,13 @@ namespace Core {
 	static SafetyHookInline sendManipulationPacketHook{};
 	static SafetyHookInline pauseSoundManagerHook{};
 	static SafetyHookInline pauseMusicManagerHook{};
+	static SafetyHookInline renderCharactersHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
 	static bool EnableTraffic = false;
 	static bool EnableCopTraffic = false;
+	static bool ShaderExtractMode = false;
 	static int DeveloperEra = ERA_THEN;
 
 	static std::unique_ptr<LuaEngine> Lua;
@@ -90,6 +92,10 @@ namespace Core {
 				return 7;
 		}
 		return 24;
+	}
+
+	static void __fastcall RenderCharacters_Hook(void* me, void* _, void* viewport) {
+		renderCharactersHook.thiscall(me, viewport);
 	}
 
 	static void __fastcall Handling_SendManipulationPacket_Hook(float* me, void* _, float* packet) {
@@ -192,12 +198,14 @@ namespace Core {
 				character->SetDeadState(0);
 			}
 		}
-
+		//D3DHooks::ExtractMode = false;
 		if (wasKeyJustPressed(VK_F5)) {
+			D3DHooks::ExtractMode = true;
+			/*
 			UINotification::SetCustomString("Car Spawned!");
 			UINotification::GetInstance()->Clear();
 			UINotification::GetInstance()->Show(0, 0, 999, 5.0f, true);
-			VehSpawner->RequestVehicle(tVehicleModelUID::tVehicleModelUID_Andec, 2465.992f, 39.996f, -4370.734f, 0.0f, true);
+			VehSpawner->RequestVehicle(tVehicleModelUID::tVehicleModelUID_Andec, 2465.992f, 39.996f, -4370.734f, 0.0f, true);*/
 			/*
 			UINotification::SetCustomString("Car Spawned!");
 			UINotification::GetInstance()->Show(0, 0, 999, 5.0f, true);
@@ -496,6 +504,8 @@ namespace Core {
 		WriteToMemory((DWORD)0x45c30f, &fontPtr, 4);
 		WriteToMemory((DWORD)0x4a9491, &fontPtr, 4);
 		WriteToMemory((DWORD)0x4a898c, &fontPtr, 4);
+
+		renderCharactersHook = safetyhook::create_inline(0x4f6e49, RenderCharacters_Hook);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.

@@ -43,6 +43,24 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(sol2)
 
+FetchContent_Declare(
+    xxhash
+    GIT_REPOSITORY "https://github.com/Cyan4973/xxHash.git"
+    GIT_TAG "cmake"
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(xxhash)
+
+add_library(xxHashStatic STATIC
+    ${xxhash_SOURCE_DIR}/xxhash.c
+)
+
+target_include_directories(xxHashStatic PUBLIC
+    ${xxhash_SOURCE_DIR}
+)
+
 #FetchContent_Declare(
 #    RakNet
 #    GIT_REPOSITORY "https://github.com/facebookarchive/RakNet.git"
