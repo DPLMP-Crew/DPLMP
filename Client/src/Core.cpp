@@ -45,6 +45,7 @@ namespace Core {
 	static SafetyHookInline setCameraMatrixHook{};
 	static SafetyHookInline inputManagerGetInputHook{};
 	static SafetyHookInline updateOverheadMapHook{};
+	static SafetyHookInline isCheatActiveHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -77,6 +78,10 @@ namespace Core {
 				return 7;
 		}
 		return 24;
+	}
+
+	static bool __fastcall IsCheatActive_Hook(void* me, void* _, int cheatId) {
+		return false;
 	}
 
 	static void __fastcall UpdateOverheadMap_Hook(void* me) {
@@ -176,7 +181,7 @@ namespace Core {
 
 		if (wasKeyJustPressed(VK_F3))
 		{
-			printf("CharacterManager: %p\nVehicleManager: %p\nLifeAcquirableVehicleManager: %p\nAIManager: %p\nCharacterAIManager: %p\n", CCharacterManager::GetInstance(), CVehicleManager::GetInstance(), LifeAcquirableVehicleManager::GetInstance(), AIManager::GetInstance(), CharacterAIManager::GetInstance());
+			printf("CharacterManager: %p\nVehicleManager: %p\nLifeAcquirableVehicleManager: %p\nAIManager: %p\nCharacterAIManager: %p\nPlayerDriverBehaviour: %p\n", CCharacterManager::GetInstance(), CVehicleManager::GetInstance(), LifeAcquirableVehicleManager::GetInstance(), AIManager::GetInstance(), CharacterAIManager::GetInstance(), CLifeSystem::GetInstance()->GetPlayer()->GetDriverBehaviour());
 		}
 
 		if (wasKeyJustPressed(VK_F2))
@@ -428,6 +433,9 @@ namespace Core {
 
 		// TODO: maybe only disable the follow player code, so we get realtime changes while in TAB map
 		updateOverheadMapHook = safetyhook::create_inline(0x4730f1, UpdateOverheadMap_Hook);
+
+		// No cheats ma'am
+		isCheatActiveHook = safetyhook::create_inline(0x4c2ab6, IsCheatActive_Hook);
 		
 		// Don't freeze game while paused.
 		Nop((BYTE*)0x45ac8c, 2);
