@@ -43,9 +43,9 @@ namespace Core {
 	static SafetyHookInline characterStepRenderingOptionsHook{};
 	static SafetyHookInline handlePlayerDeadHook{};
 	static SafetyHookInline setCameraMatrixHook{};
-	static SafetyHookInline inputManagerGetInputHook{};
 	static SafetyHookInline updateOverheadMapHook{};
 	static SafetyHookInline isCheatActiveHook{};
+	static SafetyHookInline playerDriverBehaviourStepHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -80,6 +80,14 @@ namespace Core {
 		return 24;
 	}
 
+	static void __fastcall PlayerDriverBehaviour_Step_Hook(int* me) {
+		if (IsGamePaused()) return;
+		if (!PlayerSpawned) return;
+		((float*)(me + 0x308))[0] = 1.0;
+		playerDriverBehaviourStepHook.thiscall(me);
+		((float*)(me + 0x308))[0] = 1.0;
+	}
+
 	static bool __fastcall IsCheatActive_Hook(void* me, void* _, int cheatId) {
 		return false;
 	}
@@ -87,12 +95,6 @@ namespace Core {
 	static void __fastcall UpdateOverheadMap_Hook(void* me) {
 		if (IsGamePaused()) return;
 		updateOverheadMapHook.thiscall(me);
-	}
-
-	static float __fastcall InputManager_GetInput_Hook(void* me, void* unk) {
-		if (IsGamePaused()) return 0.0f;
-		if (!PlayerSpawned) return 0.0f;
-		return inputManagerGetInputHook.fastcall<float>(me, unk);
 	}
 
 	static void __fastcall HandlePlayerDead_Hook(void* me) {
@@ -429,7 +431,7 @@ namespace Core {
 
 		setCameraMatrixHook = safetyhook::create_inline(0x55a646, SetCameraMatrix_Hook);
 
-		inputManagerGetInputHook = safetyhook::create_inline(0x574826, InputManager_GetInput_Hook);
+		playerDriverBehaviourStepHook = safetyhook::create_inline(0x4a27aa, PlayerDriverBehaviour_Step_Hook);
 
 		// TODO: maybe only disable the follow player code, so we get realtime changes while in TAB map
 		updateOverheadMapHook = safetyhook::create_inline(0x4730f1, UpdateOverheadMap_Hook);
