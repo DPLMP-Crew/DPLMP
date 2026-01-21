@@ -5,6 +5,8 @@
 #include "xxhash.h"
 #include "Core.h"
 #include "d3dcompiler.h"
+#include <filesystem>
+#include <fstream>
 
 namespace D3DHooks {
 
@@ -18,56 +20,66 @@ namespace D3DHooks {
         Reset = 16,
         Present = 17,
         EndScene = 42,
+        CreateVertexShader = 91,
         CreatePixelShader = 106,
         SetPixelShader = 107
     };
 
     static SafetyHookInline createDeviceHook{};
     static SafetyHookInline endSceneHook{};
-    static SafetyHookInline setPixelShaderHook{};
+    static SafetyHookInline createPixelShaderHook{};
 
+    static XXH64_hash_t const seed = 0;
     static bool hookedDevice = false;
 
-    static HRESULT __stdcall SetPixelShader_Hook(IDirect3DDevice9* device, IDirect3DPixelShader9* pShader) {
-        if (ExtractMode) {
-            XXH64_hash_t const seed = 0;
-
-            UINT size;
-
-            void* code = nullptr;
-            pShader->GetFunction(nullptr, &size);
-
-            code = malloc(size);
-            pShader->GetFunction(code, &size);
-
-            ID3DBlob* dsm = nullptr;
-            D3DDisassemble(code, size, 0, "DPLMP", &dsm);
-
-            XXH64_hash_t hash = XXH64(code, size, seed);
-
-            std::wstring fileLoc = Core::Directory + L"\\" + std::to_wstring(hash) + L".ps";
-
-            FILE* psF = _wfopen(fileLoc.c_str(), L"wb");
-            fwrite(dsm->GetBufferPointer(), 1, dsm->GetBufferSize() - 1, psF);
-            fclose(psF);
-
-            dsm->Release();
-            dsm = nullptr;
-            free(code);
+    static size_t GetShaderSize(const DWORD* code) {
+        size_t i = 0;
+        while (code[i] != D3DSIO_END) {
+            i++;
         }
-        return setPixelShaderHook.stdcall<HRESULT>(device, pShader);
+        return (i + 1) * sizeof(DWORD);
+    }
+
+    static std::string ReadTextFile(const std::wstring& path)
+    {
+        std::ifstream file(path);
+        file.exceptions(std::ios::failbit | std::ios::badbit);
+
+        return std::string(
+            (std::istreambuf_iterator<char>(file)),
+            std::istreambuf_iterator<char>()
+        );
+    }
+
+    static HRESULT __stdcall CreatePixelShader_Hook(IDirect3DDevice9* device, DWORD* pFunction, IDirect3DPixelShader9** ppShader) {
+        size_t size = GetShaderSize(pFunction);
+        XXH64_hash_t hash = XXH64(pFunction, size, seed);
+        std::wstring fileLoc = Core::Directory + L"\\data\\shaders\\" + std::to_wstring(hash) + L".hlsl";
+        if (std::filesystem::exists(fileLoc))
+        {
+            std::string hlsl = ReadTextFile(fileLoc);
+            ID3DBlob* compiledShader;
+            ID3DBlob* errors;
+            D3DCompile(hlsl.c_str(), hlsl.size(), "Shader", NULL, NULL, "main", "ps_3_0", 0, 0, &compiledShader, &errors);
+            HRESULT result = createPixelShaderHook.stdcall<HRESULT>(device, compiledShader->GetBufferPointer(), ppShader);
+            compiledShader->Release();
+            errors->Release();
+            compiledShader = nullptr;
+            errors = nullptr;
+            return result;
+        }
+        return createPixelShaderHook.stdcall<HRESULT>(device, pFunction, ppShader);
     }
 
     static HRESULT __stdcall EndScene_Hook(IDirect3DDevice9* device) {
         ExtractMode = false;
         HRESULT res = endSceneHook.stdcall<HRESULT>(device);
-        //printf("End Scene\n");
         return res;
     }
 
     static void HookDevice(void** deviceVTable) {
         endSceneHook = safetyhook::create_inline(deviceVTable[eD3D9Device::EndScene], EndScene_Hook);
-        setPixelShaderHook = safetyhook::create_inline(deviceVTable[eD3D9Device::SetPixelShader], SetPixelShader_Hook);
+        createPixelShaderHook = safetyhook::create_inline(deviceVTable[eD3D9Device::CreatePixelShader], CreatePixelShader_Hook);
     }
 
     static HRESULT __stdcall CreateDevice_Hook(
@@ -88,7 +100,6 @@ namespace D3DHooks {
             HookDevice(deviceVTable);
         }
 
-        //printf("D3D9 Device Created\n");
         return res;
     }
 
