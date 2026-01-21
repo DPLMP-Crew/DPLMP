@@ -1,3 +1,6 @@
+// DAYTIME NORMAL MAPPED CHARACTER
+// Fix handedness and broken tangents - lazy duchess
+
 sampler g_samplerDiffuse : register(s0);
 sampler g_samplerNormalMap : register(s1);
 float4 s_LightAmbientDirection : register(c2);
