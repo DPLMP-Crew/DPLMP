@@ -60,7 +60,12 @@ namespace D3DHooks {
             std::string hlsl = ReadTextFile(fileLoc);
             ID3DBlob* compiledShader;
             ID3DBlob* errors;
-            D3DCompile(hlsl.c_str(), hlsl.size(), "Shader", NULL, NULL, "main", "ps_3_0", 0, 0, &compiledShader, &errors);
+            HRESULT compileResult = D3DCompile(hlsl.c_str(), hlsl.size(), "Shader", NULL, NULL, "main", "ps_3_0", 0 , 0, &compiledShader, &errors);
+            if (!SUCCEEDED(compileResult)) {
+                printf("Shader compilation FAILED!\n");
+                printf((const char*)errors->GetBufferPointer());
+                printf("\n");
+            }
             HRESULT result = createPixelShaderHook.stdcall<HRESULT>(device, compiledShader->GetBufferPointer(), ppShader);
             compiledShader->Release();
             errors->Release();
