@@ -45,6 +45,7 @@ target_sources(DPLMPClient
         src/LuaVehicle.cpp
         src/VehicleSpawner.cpp
         src/dpl/CHandling.cpp
+        src/dpl/CCharacterCategoryManager.cpp
 )
 
 target_include_directories(DPLMPClient

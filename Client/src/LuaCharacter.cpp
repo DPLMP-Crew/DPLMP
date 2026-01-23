@@ -3,6 +3,7 @@
 #include "dpl/CLifePlayer.h"
 #include "dpl/CPlayerDriverBehaviour.h"
 #include "dpl/CWipeManager.h"
+#include "dpl/CCharacterCategoryManager.h"
 #include "mathutil.h"
 #include "Core.h"
 
@@ -71,6 +72,9 @@ void GameCharacter::SwapSkin(int animations, int skin) {
 	Core::ResourceMgr->Acquire(SpooledPackageType::Characters, skin);
 	Core::ResourceMgr->Release(SpooledPackageType::Characters, m_Handle->GetModel());
 	m_Handle->SwapSkin(animations, skin);
+	CCharacter* player = GetPlayerCharacter();
+	if (m_Handle == player)
+		CCharacterCategoryManager::GetInstance()->SetPlayerAvatar(skin);
 }
 
 void LuaCharacter::Register(sol::state* lua) {
