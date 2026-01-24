@@ -15,8 +15,7 @@ void ResourceManager::Acquire(SpooledPackageType package, int id) {
 
 	if (it != m_Handles.end())
 	{
-		auto handle = *it;
-		handle.second.m_References++;
+		it->second.m_References++;
 	}
 	else
 	{
@@ -36,9 +35,8 @@ void ResourceManager::Release(SpooledPackageType package, int id) {
 
 	if (it != m_Handles.end()) 
 	{
-		auto handle = *it;
-		handle.second.m_References--;
-		if (handle.second.m_References <= 0) {
+		it->second.m_References--;
+		if (it->second.m_References <= 0) {
 			printf("Releasing asset id %i, package %i\n", id, package);
 			spool->SetEntityPriority(package, id, SpoolPriority::Release);
 			m_Handles.erase(it);

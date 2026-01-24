@@ -53,6 +53,7 @@ namespace Core {
 	static SafetyHookInline pauseMusicManagerHook{};
 	static SafetyHookInline renderCharactersHook{};
 	static SafetyHookInline createFileHook{};
+	static SafetyHookInline spoolableResManagerIsRequiredHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -365,6 +366,12 @@ namespace Core {
 		return nullptr;
 	}
 
+	static bool __fastcall SpoolableResourceManager_IsRequired_Hook(void* me, void* _, SpooledPackageType packageType, int id)
+	{
+		if (ResourceMgr != nullptr && ResourceMgr->IsAlive(packageType, id)) return true;
+		return spoolableResManagerIsRequiredHook.thiscall<bool>(me, packageType, id);
+	}
+
 	static LPCWSTR GetPrefix(LPCWSTR str, const std::wstring& prefix)
 	{
 		if (!str)
@@ -533,6 +540,9 @@ namespace Core {
 		HMODULE kernelBase = GetModuleHandle("KERNELBASE.DLL");
 		FARPROC fileCreateProc = GetProcAddress(kernelBase, "CreateFileW");
 		createFileHook = safetyhook::create_inline(fileCreateProc, CreateFileW_Hook);
+
+		// Prevent game from unloading assets that are in use by the mod ( LIKELY NOT NECESSARY, HANDLED BY THE SPOOL PRIORITY INGAME )
+		// spoolableResManagerIsRequiredHook = safetyhook::create_inline(0x548973, SpoolableResourceManager_IsRequired_Hook);
 
 		// Don't freeze game while paused.
 		Nop((BYTE*)0x45ac8c, 2);
