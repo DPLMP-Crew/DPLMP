@@ -5,6 +5,7 @@
 #include <memory>
 
 namespace Core {
+	extern std::wstring GameDirectory;
 	extern std::wstring Directory;
 	extern bool PlayerSpawned;
 	extern float DeltaTime;

@@ -52,6 +52,7 @@ namespace Core {
 	static SafetyHookInline pauseSoundManagerHook{};
 	static SafetyHookInline pauseMusicManagerHook{};
 	static SafetyHookInline renderCharactersHook{};
+	static SafetyHookInline createFileHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -62,6 +63,7 @@ namespace Core {
 
 	static std::unique_ptr<LuaEngine> Lua;
 
+	std::wstring GameDirectory;
 	std::wstring Directory;
 	bool PlayerSpawned = true;
 	float DeltaTime = 0.0;
@@ -363,6 +365,40 @@ namespace Core {
 		return nullptr;
 	}
 
+	static LPCWSTR GetPrefix(LPCWSTR str, const std::wstring& prefix)
+	{
+		if (!str)
+			return nullptr;
+
+		size_t prefixLen = prefix.size();
+		size_t strLen = wcslen(str);
+
+		if (strLen < prefixLen)
+			return nullptr;
+
+		if (wcsncmp(str, prefix.c_str(), prefixLen) == 0)
+			return str + prefixLen;
+		return nullptr;
+	}
+
+	static HANDLE __stdcall CreateFileW_Hook(LPCWSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile) {
+		if (dwDesiredAccess == GENERIC_READ && dwCreationDisposition == OPEN_EXISTING)
+		{
+			LPCWSTR prefix = GetPrefix(lpFileName, GameDirectory);
+			if (prefix != nullptr) {
+				std::wstring vfsPath = Core::Directory + L"\\data\\game" + prefix;
+				
+				HANDLE vfsHandle = createFileHook.stdcall<HANDLE>(vfsPath.c_str(), dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+
+				if (vfsHandle == INVALID_HANDLE_VALUE)
+					return createFileHook.stdcall<HANDLE>(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+				else
+					return vfsHandle;
+			}
+		}
+		return createFileHook.stdcall<HANDLE>(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+	}
+
 	static void WaitForSteamUnpack() {
 		// Purpose: Steam EXE gets unpacked on boot, so hooking before this crashes the game or doesn't work.
 		// TODO - Find a better way to do this.
@@ -492,6 +528,11 @@ namespace Core {
 		WriteToMemory((DWORD)0x45b7f5, &jmp, 1);
 
 		// END
+
+		// Simple VFS for game overrides
+		HMODULE kernelBase = GetModuleHandle("KERNELBASE.DLL");
+		FARPROC fileCreateProc = GetProcAddress(kernelBase, "CreateFileW");
+		createFileHook = safetyhook::create_inline(fileCreateProc, CreateFileW_Hook);
 
 		// Don't freeze game while paused.
 		Nop((BYTE*)0x45ac8c, 2);

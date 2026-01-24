@@ -9,13 +9,21 @@ static DWORD WINAPI CoreThread(LPVOID param)
     return 0;
 }
 
+static void CacheGameDirectory() {
+    wchar_t path[MAX_PATH];
+    GetModuleFileNameW(NULL, path, MAX_PATH);
+    std::wstring finalPath = path;
+    size_t pos = finalPath.find_last_of(L"\\/");
+    Core::GameDirectory = finalPath.substr(0, pos);
+    CharUpperBuffW(Core::GameDirectory.data(), static_cast<DWORD>(Core::GameDirectory.size()));
+}
+
 static void CacheCoreDirectory(HMODULE handle) {
     wchar_t path[MAX_PATH];
     GetModuleFileNameW(handle, path, MAX_PATH);
     std::wstring finalPath = path;
     size_t pos = finalPath.find_last_of(L"\\/");
     Core::Directory = finalPath.substr(0, pos);
-
 }
 
 BOOL WINAPI DllMain(HMODULE hModule,
@@ -33,6 +41,7 @@ BOOL WINAPI DllMain(HMODULE hModule,
         DisableThreadLibraryCalls(hModule);
 		printf("Initializing DPLMP Core.\n");
         CacheCoreDirectory(hModule);
+        CacheGameDirectory();
         CreateThread(0, 0, CoreThread, hModule, 0, 0);
         break;
     case DLL_THREAD_ATTACH:
