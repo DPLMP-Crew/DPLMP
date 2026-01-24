@@ -54,3 +54,8 @@ bool ResourceManager::IsLoaded(SpooledPackageType package, int id) {
 	SpoolableResourceManager* spool = SpoolableResourceManager::GetInstance();
 	return spool->IsEntityLoaded(package, id);
 }
+
+bool ResourceManager::IsAlive(SpooledPackageType package, int id) {
+	if (package == SpooledPackageType::Characters && (id == ECharacterType::TheKid_Then || id == ECharacterType::TheDriver_Now)) return true;
+	return (m_Handles.find(MakeKey(package, id)) != m_Handles.end());
+}
