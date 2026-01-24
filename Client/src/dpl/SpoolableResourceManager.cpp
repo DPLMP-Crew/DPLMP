@@ -5,9 +5,9 @@ void SpoolableResourceManager::SetEntityPriority(SpooledPackageType packageType,
 	((void(__thiscall*)(SpoolableResourceManager*, int, int, int))0x5492B8)(this, packageType, ID, priority);
 }
 
-void SpoolableResourceManager::RequestEntity(SpooledPackageType packageType, int ID, SpoolPriority priority, int unk2)
+void SpoolableResourceManager::RequestEntity(SpooledPackageType packageType, int ID, int unk1, SpoolPriority priority)
 {
-	((void(__thiscall*)(SpoolableResourceManager*, int, int, int))0x549284)(this, packageType, ID, priority);
+	((void(__thiscall*)(SpoolableResourceManager*, int, int, int, int))0x549284)(this, packageType, ID, unk1, priority);
 }
 
 bool SpoolableResourceManager::IsEntityLoaded(SpooledPackageType packageType, int ID)
