@@ -25,6 +25,7 @@
 #include <chrono>
 #include "LuaHooks.h"
 #include "dpl/CHandling.h"
+#include "dpl/CPlaylist.h"
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -165,6 +166,8 @@ namespace Core {
 			std::wstring luaScriptPath = Directory + L"\\data\\scripts\\dev.lua";
 			Lua->RunScriptFromFile(luaScriptPath);
 		}
+		CPlaylist* musicPlaylist = (CPlaylist*)0x6cfd08;
+		musicPlaylist->Shuffle();
 		return retVal;
 	}
 

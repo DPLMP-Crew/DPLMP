@@ -46,6 +46,7 @@ target_sources(DPLMPClient
         src/VehicleSpawner.cpp
         src/dpl/CHandling.cpp
         src/dpl/CCharacterCategoryManager.cpp
+        src/dpl/CPlaylist.cpp
 )
 
 target_include_directories(DPLMPClient
