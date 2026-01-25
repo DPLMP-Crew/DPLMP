@@ -60,6 +60,7 @@ namespace Core {
 	static bool EnableTraffic = false;
 	static bool EnableCopTraffic = false;
 	static bool ShaderExtractMode = false;
+	static bool DontRunAltTabbed = false;
 	static int DeveloperEra = ERA_THEN;
 
 	static std::unique_ptr<LuaEngine> Lua;
@@ -430,6 +431,8 @@ namespace Core {
 				EnableNormalGameLoop = true;
 			else if (wcscmp(cmd.c_str(), L"-now") == 0)
 				DeveloperEra = ERA_NOW;
+			else if (wcscmp(cmd.c_str(), L"-focusedonly") == 0)
+				DontRunAltTabbed = true;
 		}
 	}
 
@@ -538,6 +541,12 @@ namespace Core {
 
 		// dummy out pause menu profiles option bc it's BAD
 		WriteToMemory((DWORD)0x45bb8e, &jmp, 1);
+
+		// Run game while unfocused
+		if (!DontRunAltTabbed) {
+			char zero = 0x00;
+			WriteToMemory((DWORD)0x57168E, &zero, 1);
+		}
 
 		// Simple VFS for game overrides
 		HMODULE kernelBase = GetModuleHandle("KERNELBASE.DLL");
