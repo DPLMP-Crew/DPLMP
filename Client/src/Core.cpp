@@ -536,6 +536,9 @@ namespace Core {
 
 		// END
 
+		// dummy out pause menu profiles option bc it's BAD
+		WriteToMemory((DWORD)0x45bb8e, &jmp, 1);
+
 		// Simple VFS for game overrides
 		HMODULE kernelBase = GetModuleHandle("KERNELBASE.DLL");
 		FARPROC fileCreateProc = GetProcAddress(kernelBase, "CreateFileW");
