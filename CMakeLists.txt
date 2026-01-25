@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.30)
 project(DPLMP LANGUAGES C CXX)
 set(FETCHCONTENT_QUIET OFF CACHE BOOL "Verbose FetchContent" FORCE)
 
+option(DPLMP_BUILD_CLIENT "Build Client Binary" ON)
+option(DPLMP_BUILD_SERVER "Build Server Binary" ON)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -61,14 +64,19 @@ target_include_directories(xxHashStatic PUBLIC
     ${xxhash_SOURCE_DIR}
 )
 
-#FetchContent_Declare(
-#    RakNet
-#    GIT_REPOSITORY "https://github.com/facebookarchive/RakNet.git"
-#    GIT_TAG "origin/master"
-#)
-#FetchContent_MakeAvailable(RakNet)
+FetchContent_Declare(
+    RakNet
+    GIT_REPOSITORY "https://github.com/facebookarchive/RakNet.git"
+    GIT_TAG "origin/master"
+)
+FetchContent_MakeAvailable(RakNet)
 
-add_subdirectory(Client)
-# TODO
-# add_subdirectory(Shared)
-# add_subdirectory(Server)
+add_subdirectory(Shared)
+
+if (WIN32 AND DPLMP_BUILD_CLIENT)
+    add_subdirectory(Client)
+endif()
+
+if (DPLMP_BUILD_SERVER)
+    add_subdirectory(Server)
+endif()
