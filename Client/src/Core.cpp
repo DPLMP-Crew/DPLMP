@@ -26,6 +26,7 @@
 #include "LuaHooks.h"
 #include "dpl/CHandling.h"
 #include "dpl/CPlaylist.h"
+#include <Shlobj.h>
 
 #define ERA_NOW 1
 #define ERA_THEN 0
@@ -65,6 +66,7 @@ namespace Core {
 
 	static std::unique_ptr<LuaEngine> Lua;
 
+	std::wstring AbsoluteUserDirectory;
 	std::wstring GameDirectory;
 	std::wstring Directory;
 	bool PlayerSpawned = true;
@@ -473,6 +475,17 @@ namespace Core {
 		WaitForSteamUnpack();
 		printf("EXE unpacked, hooking.\n");
 		ParseCommandLine();
+
+		PWSTR path_pwstr;
+		HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, KF_FLAG_DEFAULT, NULL, &path_pwstr);
+
+		if (SUCCEEDED(hr)) {
+			AbsoluteUserDirectory = std::wstring(path_pwstr) + L"\\" + UserDirectory;
+			CoTaskMemFree(path_pwstr);
+		}
+
+		// Replace My Games/Driver Parallel Lines with DPLMP user folder.
+		WriteToMemory((DWORD)0x643f8f, (void*)UserDirectory, (wcslen(UserDirectory) + 1) * sizeof(wchar_t));
 
 		D3DHooks::Initialize();
 

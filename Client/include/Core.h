@@ -5,6 +5,8 @@
 #include <memory>
 
 namespace Core {
+	constexpr const wchar_t* UserDirectory = L"My Games\\DPLMP";
+	extern std::wstring AbsoluteUserDirectory;
 	extern std::wstring GameDirectory;
 	extern std::wstring Directory;
 	extern bool PlayerSpawned;
