@@ -10,7 +10,7 @@ include(FetchContent)
 FetchContent_Declare(
     safetyhook
     GIT_REPOSITORY "https://github.com/cursey/safetyhook.git"
-    GIT_TAG "main"
+    GIT_TAG 983ba5c4b72866c8ed5020b6d57b7108fd1622c2
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
@@ -19,7 +19,7 @@ FetchContent_MakeAvailable(safetyhook)
 FetchContent_Declare(
     glm
     GIT_REPOSITORY "https://github.com/g-truc/glm.git"
-    GIT_TAG "master"
+    GIT_TAG e7970a8b26732f1b0df9690f7180546f8c30e48e
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
@@ -29,7 +29,7 @@ FetchContent_MakeAvailable(glm)
 FetchContent_Declare(
     lua
     GIT_REPOSITORY "https://github.com/marovira/lua.git"
-    GIT_TAG "master"
+    GIT_TAG 4737fb98d04a3e2fd365e55d8cb95e4c961db3a5
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
@@ -39,7 +39,7 @@ FetchContent_MakeAvailable(lua)
 FetchContent_Declare(
     sol2
     GIT_REPOSITORY "https://github.com/ThePhD/sol2.git"
-    GIT_TAG "main"
+    GIT_TAG c1f95a773c6f8f4fde8ca3efe872e7286afe4444
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
@@ -49,7 +49,7 @@ FetchContent_MakeAvailable(sol2)
 FetchContent_Declare(
     xxhash
     GIT_REPOSITORY "https://github.com/Cyan4973/xxHash.git"
-    GIT_TAG "cmake"
+    GIT_TAG 68ae745162c644dfbf2e3adec4bc8ae9592d9ba9
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
@@ -67,7 +67,7 @@ target_include_directories(xxHashStatic PUBLIC
 FetchContent_Declare(
     enet
     GIT_REPOSITORY "https://github.com/zpl-c/enet.git"
-    GIT_TAG "origin/master"
+    GIT_TAG 8647b6eaea881c86471ae29f732620d299fc20d7
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
