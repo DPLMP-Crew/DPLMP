@@ -165,13 +165,13 @@ namespace Core {
 		ResourceMgr = std::make_unique<ResourceManager>();
 		printf("Starting up VehicleSpawner.\n");
 		VehSpawner = std::make_unique<VehicleSpawner>();
+		CPlaylist* musicPlaylist = (CPlaylist*)0x6cfd08;
+		musicPlaylist->Shuffle();
 		if (DeveloperMode)
 		{
 			std::wstring luaScriptPath = Directory + L"\\data\\scripts\\dev.lua";
 			Lua->RunScriptFromFile(luaScriptPath);
 		}
-		CPlaylist* musicPlaylist = (CPlaylist*)0x6cfd08;
-		musicPlaylist->Shuffle();
 		return retVal;
 	}
 
