@@ -70,5 +70,6 @@ target_link_libraries(DPLMPClient PRIVATE
     sol2
     xxHashStatic
     d3dcompiler
+    ENetStatic
     Shared
 )

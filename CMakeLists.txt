@@ -65,11 +65,19 @@ target_include_directories(xxHashStatic PUBLIC
 )
 
 FetchContent_Declare(
-    RakNet
-    GIT_REPOSITORY "https://github.com/facebookarchive/RakNet.git"
+    enet
+    GIT_REPOSITORY "https://github.com/zpl-c/enet.git"
     GIT_TAG "origin/master"
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
 )
-FetchContent_MakeAvailable(RakNet)
+FetchContent_MakeAvailable(enet)
+
+add_library(ENetStatic INTERFACE)
+
+target_include_directories(ENetStatic INTERFACE
+    ${enet_SOURCE_DIR}/include
+)
 
 add_subdirectory(Shared)
 
