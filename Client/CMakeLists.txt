@@ -91,6 +91,10 @@ set(CLIENT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/files"
 )
 
+install(CODE [[
+  file(REMOVE_RECURSE "${CMAKE_INSTALL_PREFIX}")
+]])
+
 install(TARGETS DPLMPClient
     RUNTIME DESTINATION "Client"
 )
