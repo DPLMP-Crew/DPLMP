@@ -485,7 +485,7 @@ namespace Core {
 		}
 
 		// Replace My Games/Driver Parallel Lines with DPLMP user folder.
-		WriteToMemory((DWORD)0x643f8f, (void*)UserDirectory, (wcslen(UserDirectory) + 1) * sizeof(wchar_t));
+		WriteToMemory((DWORD)0x643f90, (void*)UserDirectory, (wcslen(UserDirectory) + 1) * sizeof(wchar_t));
 
 		D3DHooks::Initialize();
 
