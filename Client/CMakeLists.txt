@@ -73,3 +73,37 @@ target_link_libraries(DPLMPClient PRIVATE
     ENetStatic
     Shared
 )
+
+add_custom_target(BuildLauncher
+    COMMAND dotnet build
+        "${CMAKE_SOURCE_DIR}/Launcher/Launcher.sln"
+        -c $<IF:$<CONFIG:Debug>,Debug,Release>
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Launcher"
+)
+
+add_dependencies(DPLMPClient BuildLauncher)
+
+set(LAUNCHER_OUT
+    "${CMAKE_SOURCE_DIR}/Launcher/Launcher/bin/x86/$<IF:$<CONFIG:Debug>,Debug,Release>/net48"
+)
+
+set(CLIENT_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/files"
+)
+
+install(TARGETS DPLMPClient
+    RUNTIME DESTINATION "Client"
+)
+
+install(DIRECTORY
+    ${LAUNCHER_OUT}/
+    DESTINATION "Client"
+    FILES_MATCHING
+        PATTERN "*.exe"
+        PATTERN "*.dll"
+)
+
+install(DIRECTORY
+    ${CLIENT_FILES}/
+    DESTINATION "Client"
+)
