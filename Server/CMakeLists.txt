@@ -3,6 +3,13 @@ add_executable(Server)
 target_sources(Server
     PRIVATE
         src/main.cpp
+        src/Server.cpp
+)
+
+target_include_directories(Server
+    PRIVATE
+	    ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(Server

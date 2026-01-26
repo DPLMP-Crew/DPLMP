@@ -10,7 +10,7 @@ target_sources(DPLMPClient
     PRIVATE
         src/dllmain.cpp
         src/Core.cpp
-	src/dpl/CLifeEventDataManager.cpp
+	    src/dpl/CLifeEventDataManager.cpp
         src/scan.cpp
         src/dpl/SpoolableResourceManager.cpp
         src/dpl/CLoadingScreen.cpp

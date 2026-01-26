@@ -7,6 +7,6 @@ target_sources(Shared
 
 target_include_directories(Shared
     PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/src
+	    ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
