@@ -11,21 +11,21 @@ jobs:
             
         steps:
             - uses: actions/checkout@v4
-            with:
+              with:
                 submodules: true
                 
             - name: MSVC
-            uses: ilammy/msvc-dev-cmd@v1
-            with:
+              uses: ilammy/msvc-dev-cmd@v1
+              with:
                 arch: x86
                 
             - name: Client Workflow
-            run: |
+              run: |
                 cmake --workflow --preset client-release
                 
             - name: Upload Client Artifact
-            uses: actions/upload-artifact@v4
-            with:
+              uses: actions/upload-artifact@v4
+              with:
                 name: DPLMP-Client-Win32
                 path: |
                 build/client-release/*.zip
@@ -35,21 +35,21 @@ jobs:
         
         steps:
             - uses: actions/checkout@v4
-            with:
-                submodules: true
+              with:
+                    submodules: true
                 
             - name: MSVC
-            uses: ilammy/msvc-dev-cmd@v1
-            with:
+              uses: ilammy/msvc-dev-cmd@v1
+                with:
                 arch: x64
                 
             - name: Win64 Server Workflow
-            run: |
+              run: |
                 cmake --workflow --preset win64-server-release
                 
             - name: Upload Win64 Server Artifact
-            uses: actions/upload-artifact@v4
-            with:
+              uses: actions/upload-artifact@v4
+              with:
                 name: DPLMP-Server-Win64
                 path: |
                 build/win64-server-release/*.zip
@@ -59,24 +59,24 @@ jobs:
         
         steps:
             - uses: actions/checkout@v4
-            with:
+              with:
                 submodules: true
                 
             - name: Install deps
-            uses: ilammy/msvc-dev-cmd@v1
-            run: |
+              uses: ilammy/msvc-dev-cmd@v1
+              run: |
                 sudo apt-get update
                 sudo apt-get install -y \
                     build-essential \
                     cmake
                 
             - name: Linux Server Workflow
-            run: |
+              run: |
                 cmake --workflow --preset unix-server-release
                 
             - name: Upload Linux Server Artifact
-            uses: actions/upload-artifact@v4
-            with:
+              uses: actions/upload-artifact@v4
+              with:
                 name: DPLMP-Server-Linux
                 path: |
                 build/unix-server-release/*.tar.gz
