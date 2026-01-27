@@ -28,7 +28,7 @@ jobs:
               with:
                 name: DPLMP-Client-Win32
                 path: |
-                build/client-release/*.zip
+                  build/client-release/*.zip
                 
     server-win64:
         runs-on: windows-latest
@@ -52,7 +52,7 @@ jobs:
               with:
                 name: DPLMP-Server-Win64
                 path: |
-                build/win64-server-release/*.zip
+                  build/win64-server-release/*.zip
                 
     server-linux:
         runs-on: ubuntu-latest
@@ -79,4 +79,4 @@ jobs:
               with:
                 name: DPLMP-Server-Linux
                 path: |
-                build/unix-server-release/*.tar.gz
+                  build/unix-server-release/*.tar.gz
