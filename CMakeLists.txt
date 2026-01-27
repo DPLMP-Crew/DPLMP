@@ -11,7 +11,7 @@ set(ENET_TEST OFF CACHE BOOL "Build enet tests" FORCE)
 
 option(DPLMP_BUILD_CLIENT "Build Client Binary" ON)
 option(DPLMP_BUILD_SERVER "Build Server Binary" ON)
-option(DPLMP_USE_SAFETYHOOK "Use SafetyHook isntead of MinHook" OFF)
+option(DPLMP_USE_SAFETYHOOK "Use SafetyHook instead of MinHook" OFF)
 
 include(FetchContent)
 
