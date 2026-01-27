@@ -1,7 +1,6 @@
 #include "D3DHooks.h"
 #include "d3d9.h"
 #include "scan.h"
-#include "d3dx9.h"
 #include "xxhash.h"
 #include "Core.h"
 #include "d3dcompiler.h"

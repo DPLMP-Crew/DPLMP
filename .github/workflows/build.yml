@@ -14,23 +14,12 @@ jobs:
               with:
                 submodules: true
                 
-            - name: MSVC
+            - name: Setup MSVC
               uses: ilammy/msvc-dev-cmd@v1
               with:
                 arch: x86
-                
-            - name: Install DirectX SDK (June 2010)
-              shell: powershell
-              run: |
-                Invoke-WebRequest `
-                  -Uri https://download.microsoft.com/download/A/E/7/AE743F1F-632B-4809-87A9-AA1BB3458E31/DXSDK_Jun10.exe `
-                  -OutFile DXSDK_Jun10.exe
 
-                Start-Process -FilePath DXSDK_Jun10.exe `
-                  -ArgumentList "/U /Q" `
-                  -Wait
-                
-            - name: Client Workflow
+            - name: Run Client Workflow
               run: |
                 cmake --workflow --preset client-release
                 
@@ -49,12 +38,12 @@ jobs:
               with:
                     submodules: true
                 
-            - name: MSVC
+            - name: Setup MSVC
               uses: ilammy/msvc-dev-cmd@v1
               with:
                 arch: x64
                 
-            - name: Win64 Server Workflow
+            - name: Run Win64 Server Workflow
               run: |
                 cmake --workflow --preset win64-server-release
                 
@@ -80,7 +69,7 @@ jobs:
                     build-essential \
                     cmake
                 
-            - name: Linux Server Workflow
+            - name: Run Linux Server Workflow
               run: |
                 cmake --workflow --preset unix-server-release
                 
