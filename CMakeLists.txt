@@ -13,6 +13,8 @@ option(DPLMP_USE_SAFETYHOOK "Use SafetyHook isntead of MinHook" OFF)
 
 include(FetchContent)
 
+if(WIN32 AND DPLMP_BUILD_CLIENT)
+
 if(DPLMP_USE_SAFETYHOOK)
 FetchContent_Declare(
     safetyhook
@@ -97,6 +99,8 @@ add_library(ENetStatic INTERFACE)
 target_include_directories(ENetStatic INTERFACE
     ${enet_SOURCE_DIR}/include
 )
+
+endif()
 
 add_subdirectory(Shared)
 
