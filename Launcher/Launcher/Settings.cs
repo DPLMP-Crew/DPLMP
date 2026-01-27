@@ -41,16 +41,22 @@ namespace Launcher
             Instance = this;
         }
 
+        private string GetSettingsPath() 
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Constants.UserDirectory, Constants.SettingsFile);
+        }
+
         public void Load()
         {
-            var path = Path.Combine(AppContext.BaseDirectory, Constants.SettingsFile);
+            var path = GetSettingsPath();
             if (!File.Exists(path)) return;
             _ini.Read(path);
         }
 
         public void Save()
         {
-            var path = Path.Combine(AppContext.BaseDirectory, Constants.SettingsFile);
+            var path = GetSettingsPath();
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             _ini.Write(path);
         }
     }
