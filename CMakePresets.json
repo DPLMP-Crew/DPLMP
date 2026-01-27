@@ -1,0 +1,288 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 30,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base-win",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
+      }
+    },
+	{
+      "name": "base-unix",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
+      }
+    },
+    {
+      "name": "client-debug",
+      "displayName": "Win32 x86 Client Debug Build",
+	  "architecture": "Win32",
+      "inherits": "base-win",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+		"DPLMP_BUILD_CLIENT": "ON",
+		"DPLMP_BUILD_SERVER": "OFF"
+      }
+    },
+    {
+      "name": "client-release",
+      "displayName": "Win32 x86 Client Release Build",
+	  "architecture": "Win32",
+      "inherits": "base-win",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+		"DPLMP_BUILD_CLIENT": "ON",
+		"DPLMP_BUILD_SERVER": "OFF"
+      }
+    },
+	{
+      "name": "win64-server-debug",
+      "displayName": "Win x64 Server Debug Build",
+	  "architecture": "x64",
+      "inherits": "base-win",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+		"DPLMP_BUILD_CLIENT": "OFF",
+		"DPLMP_BUILD_SERVER": "ON"
+      }
+    },
+	{
+      "name": "win64-server-release",
+      "displayName": "Win x64 Server Release Build",
+	  "architecture": "x64",
+      "inherits": "base-win",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+		"DPLMP_BUILD_CLIENT": "OFF",
+		"DPLMP_BUILD_SERVER": "ON"
+      }
+    },
+	{
+      "name": "unix-server-debug",
+      "displayName": "Linux Server Debug Build",
+      "inherits": "base-unix",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+		"DPLMP_BUILD_CLIENT": "OFF",
+		"DPLMP_BUILD_SERVER": "ON"
+      }
+    },
+	{
+      "name": "unix-server-release",
+      "displayName": "Linux Server Release Build",
+      "inherits": "base-unix",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+		"DPLMP_BUILD_CLIENT": "OFF",
+		"DPLMP_BUILD_SERVER": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "client-debug",
+      "configurePreset": "client-debug",
+	  "configuration": "Debug"
+    },
+	{
+      "name": "client-release",
+      "configurePreset": "client-release",
+	  "configuration": "Release"
+    },
+	{
+      "name": "win64-server-debug",
+      "configurePreset": "win64-server-debug",
+	  "configuration": "Debug"
+    },
+	{
+      "name": "win64-server-release",
+      "configurePreset": "win64-server-release",
+	  "configuration": "Release"
+    },
+	{
+      "name": "unix-server-debug",
+      "configurePreset": "unix-server-debug"
+    },
+	{
+      "name": "unix-server-release",
+      "configurePreset": "unix-server-release"
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "client-debug",
+      "configurePreset": "client-debug",
+	  "variables": {
+		  "CPACK_PACKAGE_NAME": "Client"
+	  },
+	  "generators": [
+		"ZIP"
+	  ]
+    },
+	{
+      "name": "client-release",
+      "configurePreset": "client-release",
+	  "variables": {
+		  "CPACK_PACKAGE_NAME": "Client"
+	  },
+	  "generators": [
+		"ZIP"
+	  ]
+    },
+	{
+      "name": "win64-server-debug",
+      "configurePreset": "win64-server-debug",
+	  "variables": {
+		  "CPACK_PACKAGE_NAME": "Server"
+	  },
+	  "generators": [
+		"ZIP"
+	  ]
+    },
+	{
+      "name": "win64-server-release",
+      "configurePreset": "win64-server-release",
+	  "variables": {
+		  "CPACK_PACKAGE_NAME": "Server"
+	  },
+	  "generators": [
+		"ZIP"
+	  ]
+    },
+	{
+      "name": "unix-server-debug",
+      "configurePreset": "unix-server-debug",
+	  "variables": {
+		  "CPACK_PACKAGE_NAME": "Server"
+	  },
+	  "generators": [
+		"TGZ"
+	  ]
+    },
+	{
+      "name": "unix-server-release",
+      "configurePreset": "unix-server-release",
+	  "variables": {
+		  "CPACK_PACKAGE_NAME": "Server"
+	  },
+	  "generators": [
+		"TGZ"
+	  ]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "client-debug",
+      "steps": [
+		{
+			"type": "configure",
+			"name": "client-debug"
+		},
+		{
+			"type": "build",
+			"name": "client-debug"
+		},
+		{
+			"type": "package",
+			"name": "client-debug"
+		}
+	  ]
+    },
+	{
+      "name": "client-release",
+      "steps": [
+		{
+			"type": "configure",
+			"name": "client-release"
+		},
+		{
+			"type": "build",
+			"name": "client-release"
+		},
+		{
+			"type": "package",
+			"name": "client-release"
+		}
+	  ]
+    },
+	{
+      "name": "win64-server-debug",
+      "steps": [
+		{
+			"type": "configure",
+			"name": "win64-server-debug"
+		},
+		{
+			"type": "build",
+			"name": "win64-server-debug"
+		},
+		{
+			"type": "package",
+			"name": "win64-server-debug"
+		}
+	  ]
+    },
+	{
+      "name": "win64-server-release",
+      "steps": [
+		{
+			"type": "configure",
+			"name": "win64-server-release"
+		},
+		{
+			"type": "build",
+			"name": "win64-server-release"
+		},
+		{
+			"type": "package",
+			"name": "win64-server-release"
+		}
+	  ]
+    },
+	{
+      "name": "unix-server-debug",
+      "steps": [
+		{
+			"type": "configure",
+			"name": "unix-server-debug"
+		},
+		{
+			"type": "build",
+			"name": "unix-server-debug"
+		},
+		{
+			"type": "package",
+			"name": "unix-server-debug"
+		}
+	  ]
+    },
+	{
+      "name": "unix-server-release",
+      "steps": [
+		{
+			"type": "configure",
+			"name": "unix-server-release"
+		},
+		{
+			"type": "build",
+			"name": "unix-server-release"
+		},
+		{
+			"type": "package",
+			"name": "unix-server-release"
+		}
+	  ]
+    }
+  ]
+}

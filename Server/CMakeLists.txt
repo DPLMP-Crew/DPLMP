@@ -32,5 +32,3 @@ install(CODE [[
 install(TARGETS Server
     RUNTIME DESTINATION .
 )
-
-set(CPACK_PACKAGE_NAME "Server")

@@ -111,6 +111,3 @@ install(DIRECTORY
     ${CLIENT_FILES}/
     DESTINATION .
 )
-
-set(CPACK_GENERATOR "ZIP")
-set(CPACK_PACKAGE_NAME "Client")
