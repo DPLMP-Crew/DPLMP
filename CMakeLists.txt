@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(DPLMP LANGUAGES C CXX)
+project(DPLMP VERSION 0.0.1 LANGUAGES C CXX)
 set(FETCHCONTENT_QUIET OFF CACHE BOOL "Verbose FetchContent" FORCE)
 
 option(DPLMP_BUILD_CLIENT "Build Client Binary" ON)
@@ -88,3 +88,8 @@ endif()
 if (DPLMP_BUILD_SERVER)
     add_subdirectory(Server)
 endif()
+
+
+set(CPACK_PACKAGE_VENDOR "DPLMP-Crew")
+
+include(CPack)

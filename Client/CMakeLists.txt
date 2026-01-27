@@ -96,12 +96,12 @@ install(CODE [[
 ]])
 
 install(TARGETS DPLMPClient
-    RUNTIME DESTINATION "Client"
+    RUNTIME DESTINATION .
 )
 
 install(DIRECTORY
     ${LAUNCHER_OUT}/
-    DESTINATION "Client"
+    DESTINATION .
     FILES_MATCHING
         PATTERN "*.exe"
         PATTERN "*.dll"
@@ -109,5 +109,8 @@ install(DIRECTORY
 
 install(DIRECTORY
     ${CLIENT_FILES}/
-    DESTINATION "Client"
+    DESTINATION .
 )
+
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_PACKAGE_NAME "Client")
