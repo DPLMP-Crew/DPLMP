@@ -1,5 +1,4 @@
 #include "Core.h"
-#include <safetyhook.hpp>
 #include "dpl/CLifeEventDataManager.h"
 #include "dpl/SpoolableResourceManager.h"
 #include "dpl/CLoadingScreen.h"
@@ -33,28 +32,28 @@
 
 namespace Core {
 
-	static SafetyHookInline getForcedLevelHook{};
-	static SafetyHookInline nodeOnEnableHook{};
-	static SafetyHookInline cStateGameRunningHook{};
-	static SafetyHookInline frameUpdateHook{};
-	static SafetyHookInline setGameSpeedMuliplierHook{};
-	static SafetyHookInline createTrafficPedestrianHook{};
-	static SafetyHookInline createScriptedPedestrianHook{};
-	static SafetyHookInline createTeleportTrafficHook{};
-	static SafetyHookInline trafficVehicleHook{};
-	static SafetyHookInline createCopVehicleHook{};
-	static SafetyHookInline characterStepRenderingOptionsHook{};
-	static SafetyHookInline handlePlayerDeadHook{};
-	static SafetyHookInline setCameraMatrixHook{};
-	static SafetyHookInline updateOverheadMapHook{};
-	static SafetyHookInline isCheatActiveHook{};
-	static SafetyHookInline playerDriverBehaviourStepHook{};
-	static SafetyHookInline sendManipulationPacketHook{};
-	static SafetyHookInline pauseSoundManagerHook{};
-	static SafetyHookInline pauseMusicManagerHook{};
-	static SafetyHookInline renderCharactersHook{};
-	static SafetyHookInline createFileHook{};
-	static SafetyHookInline spoolableResManagerIsRequiredHook{};
+	static InlineHook getForcedLevelHook{};
+	static InlineHook nodeOnEnableHook{};
+	static InlineHook cStateGameRunningHook{};
+	static InlineHook frameUpdateHook{};
+	static InlineHook setGameSpeedMuliplierHook{};
+	static InlineHook createTrafficPedestrianHook{};
+	static InlineHook createScriptedPedestrianHook{};
+	static InlineHook createTeleportTrafficHook{};
+	static InlineHook trafficVehicleHook{};
+	static InlineHook createCopVehicleHook{};
+	static InlineHook characterStepRenderingOptionsHook{};
+	static InlineHook handlePlayerDeadHook{};
+	static InlineHook setCameraMatrixHook{};
+	static InlineHook updateOverheadMapHook{};
+	static InlineHook isCheatActiveHook{};
+	static InlineHook playerDriverBehaviourStepHook{};
+	static InlineHook sendManipulationPacketHook{};
+	static InlineHook pauseSoundManagerHook{};
+	static InlineHook pauseMusicManagerHook{};
+	static InlineHook renderCharactersHook{};
+	static InlineHook createFileHook{};
+	static InlineHook spoolableResManagerIsRequiredHook{};
 
 	static bool DeveloperMode = false;
 	static bool EnableNormalGameLoop = false;
@@ -490,62 +489,63 @@ namespace Core {
 		D3DHooks::Initialize();
 
 		// Lock timescale to full speed.
-		setGameSpeedMuliplierHook = safetyhook::create_inline(0x45ace8, SetGameSpeedMultiplier_Hook);
+		setGameSpeedMuliplierHook = InlineHook::Create(0x45ace8, SetGameSpeedMultiplier_Hook);
 
 		// Called every frame.
-		frameUpdateHook = safetyhook::create_inline(0x45ac50, FrameUpdate_Hook);
+		frameUpdateHook = InlineHook::Create(0x45ac50, FrameUpdate_Hook);
 
 		if (!EnableNormalGameLoop) {
 			// Force in-game.
-			getForcedLevelHook = safetyhook::create_inline(0x46746d, GetForcedLevel_Hook);
+			getForcedLevelHook = InlineHook::Create(0x46746d, GetForcedLevel_Hook);
+
 			// Stub out CStatusControlNode::OnEnable to disable life events.
-			nodeOnEnableHook = safetyhook::create_inline(0x48719a, Stub_Hook);
+			nodeOnEnableHook = InlineHook::Create(0x48719a, Stub_Hook);
 		}
 
 		// hook into Game Running state constructor to stop all life events.
-		cStateGameRunningHook = safetyhook::create_inline(0x45ad10, CStateGameRunning_Hook);
+		cStateGameRunningHook = InlineHook::Create(0x45ad10, CStateGameRunning_Hook);
 
 		if (!EnableTraffic) {
 			// REMOVE TRAFFIC HOOKS
 			// 
 			// Removes traffic peds.
-			createTrafficPedestrianHook = safetyhook::create_inline(0x44884B, CreateTrafficPedestrian_Hook);
+			createTrafficPedestrianHook = InlineHook::Create(0x44884B, CreateTrafficPedestrian_Hook);
 			// Removes scripted ped spawns (hobos around barrels, food stands, etc.)
-			createScriptedPedestrianHook = safetyhook::create_inline(0x449388, CreateScriptedPedestrian_Hook);
+			createScriptedPedestrianHook = InlineHook::Create(0x449388, CreateScriptedPedestrian_Hook);
 			// Removes ped and car traffic generation on teleport.
-			createTeleportTrafficHook = safetyhook::create_inline(0x412803, CreateTeleportTraffic_Hook);
+			createTeleportTrafficHook = InlineHook::Create(0x412803, CreateTeleportTraffic_Hook);
 			// Stops creation of AI traffic vehicles.
-			trafficVehicleHook = safetyhook::create_inline(0x410bab, TrafficVehicle_Hook);
+			trafficVehicleHook = InlineHook::Create(0x410bab, TrafficVehicle_Hook);
 		}
 
 		if (!EnableCopTraffic) {
 			// Stops creation of cop vehicles.
-			createCopVehicleHook = safetyhook::create_inline(0x40fbee, CreateCopVehicle_Hook);
+			createCopVehicleHook = InlineHook::Create(0x40fbee, CreateCopVehicle_Hook);
 		}
 
 		// Small graphical improvement, shadows on all characters + while on vehicle (for better bike visuals)
-		characterStepRenderingOptionsHook = safetyhook::create_inline(0x4e9d31, StepRenderingOptions_Hook);
+		characterStepRenderingOptionsHook = InlineHook::Create(0x4e9d31, StepRenderingOptions_Hook);
 
 		// Don't pull up game over menu - respawning should be handled via Lua. Just have to re-set health, force stand up and wipe the screen.
-		handlePlayerDeadHook = safetyhook::create_inline(0x45b315, HandlePlayerDead_Hook);
+		handlePlayerDeadHook = InlineHook::Create(0x45b315, HandlePlayerDead_Hook);
 
-		setCameraMatrixHook = safetyhook::create_inline(0x55a646, SetCameraMatrix_Hook);
+		setCameraMatrixHook = InlineHook::Create(0x55a646, SetCameraMatrix_Hook);
 
-		playerDriverBehaviourStepHook = safetyhook::create_inline(0x4a27aa, PlayerDriverBehaviour_Step_Hook);
+		playerDriverBehaviourStepHook = InlineHook::Create(0x4a27aa, PlayerDriverBehaviour_Step_Hook);
 
 		// TODO: maybe only disable the follow player code, so we get realtime changes while in TAB map
-		updateOverheadMapHook = safetyhook::create_inline(0x4730f1, UpdateOverheadMap_Hook);
+		updateOverheadMapHook = InlineHook::Create(0x4730f1, UpdateOverheadMap_Hook);
 
 		// No cheats ma'am
-		isCheatActiveHook = safetyhook::create_inline(0x4c2ab6, IsCheatActive_Hook);
+		isCheatActiveHook = InlineHook::Create(0x4c2ab6, IsCheatActive_Hook);
 
-		sendManipulationPacketHook = safetyhook::create_inline(0x58cb57, Handling_SendManipulationPacket_Hook);
+		sendManipulationPacketHook = InlineHook::Create(0x58cb57, Handling_SendManipulationPacket_Hook);
 
 		// DONT PAUSE AUDIO IN PAUSE MENUS
 		
-		pauseSoundManagerHook = safetyhook::create_inline(0x4e24cf, PauseSoundManager_Hook);
+		pauseSoundManagerHook = InlineHook::Create(0x4e24cf, PauseSoundManager_Hook);
 
-		pauseMusicManagerHook = safetyhook::create_inline(0x4e20eb, PauseMusicManager_Hook);
+		pauseMusicManagerHook = InlineHook::Create(0x4e20eb, PauseMusicManager_Hook);
 
 		char jmp = 0xEB;
 		WriteToMemory((DWORD)0x45b7f5, &jmp, 1);
@@ -564,7 +564,7 @@ namespace Core {
 		// Simple VFS for game overrides
 		HMODULE kernelBase = GetModuleHandle("KERNELBASE.DLL");
 		FARPROC fileCreateProc = GetProcAddress(kernelBase, "CreateFileW");
-		createFileHook = safetyhook::create_inline(fileCreateProc, CreateFileW_Hook);
+		createFileHook = InlineHook::Create(fileCreateProc, CreateFileW_Hook);
 
 		// Prevent game from unloading assets that are in use by the mod ( LIKELY NOT NECESSARY, HANDLED BY THE SPOOL PRIORITY INGAME )
 		// spoolableResManagerIsRequiredHook = safetyhook::create_inline(0x548973, SpoolableResourceManager_IsRequired_Hook);
@@ -584,7 +584,7 @@ namespace Core {
 		WriteToMemory((DWORD)0x4a9491, &fontPtr, 4);
 		WriteToMemory((DWORD)0x4a898c, &fontPtr, 4);
 
-		renderCharactersHook = safetyhook::create_inline(0x4f6e49, RenderCharacters_Hook);
+		renderCharactersHook = InlineHook::Create(0x4f6e49, RenderCharacters_Hook);
 
 		// Below causes a crash due to a buffer overflow in the character pool.
 		// The pool is in CCharacterManager, offset 0x318, right before free character count. The char count is overriden if we go any higher.

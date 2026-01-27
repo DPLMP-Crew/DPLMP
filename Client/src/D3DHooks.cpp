@@ -1,6 +1,6 @@
 #include "D3DHooks.h"
 #include "d3d9.h"
-#include <safetyhook.hpp>
+#include "scan.h"
 #include "d3dx9.h"
 #include "xxhash.h"
 #include "Core.h"
@@ -25,9 +25,9 @@ namespace D3DHooks {
         SetPixelShader = 107
     };
 
-    static SafetyHookInline createDeviceHook{};
-    static SafetyHookInline endSceneHook{};
-    static SafetyHookInline createPixelShaderHook{};
+    static InlineHook createDeviceHook{};
+    static InlineHook endSceneHook{};
+    static InlineHook createPixelShaderHook{};
 
     static XXH64_hash_t const seed = 0;
     static bool hookedDevice = false;
@@ -83,8 +83,8 @@ namespace D3DHooks {
     }
 
     static void HookDevice(void** deviceVTable) {
-        endSceneHook = safetyhook::create_inline(deviceVTable[eD3D9Device::EndScene], EndScene_Hook);
-        createPixelShaderHook = safetyhook::create_inline(deviceVTable[eD3D9Device::CreatePixelShader], CreatePixelShader_Hook);
+        endSceneHook = InlineHook::Create(deviceVTable[eD3D9Device::EndScene], EndScene_Hook);
+        createPixelShaderHook = InlineHook::Create(deviceVTable[eD3D9Device::CreatePixelShader], CreatePixelShader_Hook);
     }
 
     static HRESULT __stdcall CreateDevice_Hook(
@@ -112,6 +112,6 @@ namespace D3DHooks {
 		IDirect3D9* dummyd3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 		void** d3dvtable = *(void***)dummyd3d9;
 
-        createDeviceHook = safetyhook::create_inline(d3dvtable[eD3D9::CreateDevice], CreateDevice_Hook);
+        createDeviceHook = InlineHook::Create(d3dvtable[eD3D9::CreateDevice], CreateDevice_Hook);
 	}
 }

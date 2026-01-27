@@ -4,7 +4,7 @@
 #include "dpl/CVehicle.h"
 #include <vector>
 
-enum VehicleSpawnState {
+enum class VehicleSpawnState {
 	Processing,
 	Spawned,
 	Failed

@@ -24,6 +24,17 @@
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}"
       }
     },
+	{
+      "name": "client-release",
+      "displayName": "Win32 x86 Client Release Build",
+	  "architecture": "Win32",
+      "inherits": "base-win",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"DPLMP_BUILD_CLIENT": "ON",
+				"DPLMP_BUILD_SERVER": "OFF"
+			}
+    },
     {
       "name": "client-debug",
       "displayName": "Win32 x86 Client Debug Build",
@@ -35,17 +46,6 @@
 		"DPLMP_BUILD_SERVER": "OFF"
       }
     },
-    {
-      "name": "client-release",
-      "displayName": "Win32 x86 Client Release Build",
-	  "architecture": "Win32",
-      "inherits": "base-win",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-		"DPLMP_BUILD_CLIENT": "ON",
-		"DPLMP_BUILD_SERVER": "OFF"
-      }
-    },
 	{
       "name": "win64-server-debug",
       "displayName": "Win x64 Server Debug Build",
@@ -53,8 +53,8 @@
       "inherits": "base-win",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-		"DPLMP_BUILD_CLIENT": "OFF",
-		"DPLMP_BUILD_SERVER": "ON"
+				"DPLMP_BUILD_CLIENT": "OFF",
+				"DPLMP_BUILD_SERVER": "ON"
       }
     },
 	{
@@ -64,8 +64,8 @@
       "inherits": "base-win",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-		"DPLMP_BUILD_CLIENT": "OFF",
-		"DPLMP_BUILD_SERVER": "ON"
+				"DPLMP_BUILD_CLIENT": "OFF",
+				"DPLMP_BUILD_SERVER": "ON"
       }
     },
 	{
@@ -74,8 +74,8 @@
       "inherits": "base-unix",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-		"DPLMP_BUILD_CLIENT": "OFF",
-		"DPLMP_BUILD_SERVER": "ON"
+				"DPLMP_BUILD_CLIENT": "OFF",
+				"DPLMP_BUILD_SERVER": "ON"
       }
     },
 	{
@@ -84,21 +84,21 @@
       "inherits": "base-unix",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-		"DPLMP_BUILD_CLIENT": "OFF",
-		"DPLMP_BUILD_SERVER": "ON"
+				"DPLMP_BUILD_CLIENT": "OFF",
+				"DPLMP_BUILD_SERVER": "ON"
       }
     }
   ],
   "buildPresets": [
-    {
-      "name": "client-debug",
-      "configurePreset": "client-debug",
-	  "configuration": "Debug"
-    },
 	{
       "name": "client-release",
       "configurePreset": "client-release",
 	  "configuration": "Release"
+    },
+	{
+      "name": "client-debug",
+      "configurePreset": "client-debug",
+	  "configuration": "Debug"
     },
 	{
       "name": "win64-server-debug",
@@ -120,9 +120,9 @@
     }
   ],
   "packagePresets": [
-    {
-      "name": "client-debug",
-      "configurePreset": "client-debug",
+	{
+      "name": "client-release",
+      "configurePreset": "client-release",
 	  "variables": {
 		  "CPACK_PACKAGE_NAME": "Client"
 	  },
@@ -130,9 +130,9 @@
 		"ZIP"
 	  ]
     },
-	{
-      "name": "client-release",
-      "configurePreset": "client-release",
+    {
+      "name": "client-debug",
+      "configurePreset": "client-debug",
 	  "variables": {
 		  "CPACK_PACKAGE_NAME": "Client"
 	  },
@@ -182,23 +182,6 @@
     }
   ],
   "workflowPresets": [
-    {
-      "name": "client-debug",
-      "steps": [
-		{
-			"type": "configure",
-			"name": "client-debug"
-		},
-		{
-			"type": "build",
-			"name": "client-debug"
-		},
-		{
-			"type": "package",
-			"name": "client-debug"
-		}
-	  ]
-    },
 	{
       "name": "client-release",
       "steps": [
@@ -213,6 +196,23 @@
 		{
 			"type": "package",
 			"name": "client-release"
+		}
+	  ]
+    },
+    {
+      "name": "client-debug",
+      "steps": [
+		{
+			"type": "configure",
+			"name": "client-debug"
+		},
+		{
+			"type": "build",
+			"name": "client-debug"
+		},
+		{
+			"type": "package",
+			"name": "client-debug"
 		}
 	  ]
     },

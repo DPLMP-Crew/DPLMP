@@ -62,7 +62,6 @@ target_link_directories(DPLMPClient
 )
 
 target_link_libraries(DPLMPClient PRIVATE 
-    safetyhook
     d3d9
     d3dx9
     glm
@@ -73,6 +72,23 @@ target_link_libraries(DPLMPClient PRIVATE
     ENetStatic
     Shared
 )
+
+if (DPLMP_USE_SAFETYHOOK)
+target_link_libraries(DPLMPClient PRIVATE
+    safetyhook
+)
+target_compile_definitions(DPLMPClient PRIVATE LDSCAN_SAFETYHOOK)
+else ()
+target_link_libraries(DPLMPClient PRIVATE
+    minhook
+)
+target_include_directories(DPLMPClient
+    PRIVATE
+        ${minhook_SOURCE_DIR}/include
+)
+target_compile_definitions(DPLMPClient PRIVATE LDSCAN_BRUTEFORCE_MINHOOK)
+target_compile_definitions(DPLMPClient PRIVATE LDSCAN_SUSPEND_MINHOOK)
+endif ()
 
 add_custom_target(BuildLauncher
     COMMAND dotnet build

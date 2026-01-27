@@ -1,12 +1,19 @@
 cmake_minimum_required(VERSION 3.30)
+
 project(DPLMP VERSION 0.0.1 LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 set(FETCHCONTENT_QUIET OFF CACHE BOOL "Verbose FetchContent" FORCE)
 
 option(DPLMP_BUILD_CLIENT "Build Client Binary" ON)
 option(DPLMP_BUILD_SERVER "Build Server Binary" ON)
+option(DPLMP_USE_SAFETYHOOK "Use SafetyHook isntead of MinHook" OFF)
 
 include(FetchContent)
 
+if(DPLMP_USE_SAFETYHOOK)
 FetchContent_Declare(
     safetyhook
     GIT_REPOSITORY "https://github.com/cursey/safetyhook.git"
@@ -14,7 +21,19 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
+
 FetchContent_MakeAvailable(safetyhook)
+else()
+FetchContent_Declare(
+    MinHook
+    GIT_REPOSITORY https://github.com/TsudaKageyu/minhook.git
+    GIT_TAG 1e9ad1eb42db11bfcb65461f687c656612d1b555
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(MinHook)
+endif()
 
 FetchContent_Declare(
     glm
