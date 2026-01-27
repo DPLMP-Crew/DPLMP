@@ -40,7 +40,7 @@ jobs:
                 
             - name: MSVC
               uses: ilammy/msvc-dev-cmd@v1
-                with:
+              with:
                 arch: x64
                 
             - name: Win64 Server Workflow
