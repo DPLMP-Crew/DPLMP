@@ -63,7 +63,6 @@ jobs:
                 submodules: true
                 
             - name: Install deps
-              uses: ilammy/msvc-dev-cmd@v1
               run: |
                 sudo apt-get update
                 sudo apt-get install -y \
