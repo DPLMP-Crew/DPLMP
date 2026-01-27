@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(FETCHCONTENT_QUIET OFF CACHE BOOL "Verbose FetchContent" FORCE)
 
+set(ENET_TEST OFF CACHE BOOL "Build enet tests" FORCE)
+
 option(DPLMP_BUILD_CLIENT "Build Client Binary" ON)
 option(DPLMP_BUILD_SERVER "Build Server Binary" ON)
 option(DPLMP_USE_SAFETYHOOK "Use SafetyHook isntead of MinHook" OFF)
