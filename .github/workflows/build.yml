@@ -19,6 +19,17 @@ jobs:
               with:
                 arch: x86
                 
+            - name: Install DirectX SDK (June 2010)
+              shell: powershell
+              run: |
+                Invoke-WebRequest `
+                  -Uri https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/DXSDK_Jun10.exe `
+                  -OutFile DXSDK_Jun10.exe
+
+                Start-Process -FilePath DXSDK_Jun10.exe `
+                  -ArgumentList "/U /Q" `
+                  -Wait
+                
             - name: Client Workflow
               run: |
                 cmake --workflow --preset client-release
