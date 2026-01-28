@@ -116,50 +116,45 @@ void MakeJMP(BYTE* pAddress, DWORD dwJumpTo, DWORD dwLen)
 
 }
 
-static bool otherThreadsSuspended = false;
-static std::vector<HANDLE> suspendedThreads;
+DWORD GetMainThreadId()
+{
+    DWORD pid = GetCurrentProcessId();
+    DWORD mainThreadId = 0;
+    FILETIME earliestTime = { UINT_MAX, UINT_MAX };
 
-bool SuspendOtherThreads() {
-    if (otherThreadsSuspended)
-        return false;
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+    if (snapshot == INVALID_HANDLE_VALUE)
+        return 0;
 
-    DWORD myThreadId = GetCurrentThreadId();
-    DWORD myProcessId = GetCurrentProcessId();
-
-    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-    if (snap == INVALID_HANDLE_VALUE) return false;
-
-    THREADENTRY32 te{};
+    THREADENTRY32 te;
     te.dwSize = sizeof(te);
 
-    if (Thread32First(snap, &te)) {
-        do {
-            if (te.th32OwnerProcessID == myProcessId && te.th32ThreadID != myThreadId) {
-                HANDLE hThread = OpenThread(THREAD_SUSPEND_RESUME | THREAD_QUERY_INFORMATION, FALSE, te.th32ThreadID);
-                if (hThread) {
-                    if (SuspendThread(hThread) != (DWORD)-1) {
-                        suspendedThreads.push_back(hThread);
+    if (Thread32First(snapshot, &te))
+    {
+        do
+        {
+            if (te.th32OwnerProcessID == pid)
+            {
+                HANDLE hThread = OpenThread(THREAD_QUERY_INFORMATION, FALSE, te.th32ThreadID);
+                if (hThread)
+                {
+                    FILETIME createTime, exitTime, kernelTime, userTime;
+                    if (GetThreadTimes(hThread, &createTime, &exitTime, &kernelTime, &userTime))
+                    {
+                        if (CompareFileTime(&createTime, &earliestTime) < 0)
+                        {
+                            earliestTime = createTime;
+                            mainThreadId = te.th32ThreadID;
+                        }
                     }
-                    else {
-                        CloseHandle(hThread);
-                    }
+                    CloseHandle(hThread);
                 }
             }
-        } while (Thread32Next(snap, &te));
+        } while (Thread32Next(snapshot, &te));
     }
 
-    CloseHandle(snap);
-    otherThreadsSuspended = true;
-    return true;
-}
-
-void ResumeOtherThreads() {
-    for (HANDLE hThread : suspendedThreads) {
-        ResumeThread(hThread);
-        CloseHandle(hThread);
-    }
-    suspendedThreads.clear();
-    otherThreadsSuspended = false;
+    CloseHandle(snapshot);
+    return mainThreadId;
 }
 
 #if !LDSCAN_SAFETYHOOK
@@ -170,18 +165,11 @@ InlineHook InlineHook::Create(DWORD address, void* target) {
 #if LDSCAN_SAFETYHOOK
     return InlineHook(std::move(safetyhook::create_inline(address, target)));
 #else
-#if LDSCAN_SUSPEND_MINHOOK
-    bool suspended = SuspendOtherThreads();
-#endif
     if (!m_Initialized) {
         MH_STATUS res = MH_Initialize();
         m_Initialized = true;
         if (res != MH_OK)
         {
-            #if LDSCAN_SUSPEND_MINHOOK
-            if (suspended)
-                ResumeOtherThreads();
-            #endif
             printf("[InlineHook | ERROR] Failed to initialize MinHook! Code %i.\n", res);
             return InlineHook(InjectionResult::Failed);
         }
@@ -201,16 +189,8 @@ InlineHook InlineHook::Create(DWORD address, void* target) {
             memcpy(fnMem, (void*)address, 5);
             VirtualProtect((void*)address, 5, dwOldProtect, &dwOldProtect);
             MakeJMP((BYTE*)address, (DWORD)target, 5);
-#if LDSCAN_SUSPEND_MINHOOK
-            if (suspended)
-                ResumeOtherThreads();
-#endif
             return InlineHook(fnMem);
         }
-#endif
-#if LDSCAN_SUSPEND_MINHOOK
-        if (suspended)
-            ResumeOtherThreads();
 #endif
         printf("[InlineHook | ERROR] MinHook creation failed for function %p, code %i.\n", (void*)address, createRes);
         return InlineHook(InjectionResult::Failed);
@@ -218,17 +198,9 @@ InlineHook InlineHook::Create(DWORD address, void* target) {
 
     MH_STATUS enableRes = MH_EnableHook((void*)address);
     if (enableRes != MH_OK) {
-#if LDSCAN_SUSPEND_MINHOOK
-        if (suspended)
-            ResumeOtherThreads();
-#endif
         printf("[InlineHook | ERROR] MinHook enable failed for function %p, code %i.\n", (void*)address, enableRes);
         return InlineHook(InjectionResult::Failed);
     }
-#if LDSCAN_SUSPEND_MINHOOK
-    if (suspended)
-        ResumeOtherThreads();
-#endif
     return InlineHook(fnPtr);
 #endif
 }

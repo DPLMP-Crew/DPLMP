@@ -80,7 +80,6 @@ target_include_directories(DPLMPClient
         ${minhook_SOURCE_DIR}/include
 )
 target_compile_definitions(DPLMPClient PRIVATE LDSCAN_BRUTEFORCE_MINHOOK)
-target_compile_definitions(DPLMPClient PRIVATE LDSCAN_SUSPEND_MINHOOK)
 endif ()
 
 add_custom_target(BuildLauncher
