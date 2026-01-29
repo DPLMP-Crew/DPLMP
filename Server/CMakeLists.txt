@@ -14,6 +14,7 @@ target_include_directories(Server
 
 target_link_libraries(Server
     PRIVATE
+        ENetStatic
         Shared
 )
 

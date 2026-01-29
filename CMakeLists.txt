@@ -15,6 +15,24 @@ option(DPLMP_USE_SAFETYHOOK "Use SafetyHook instead of MinHook" OFF)
 
 include(FetchContent)
 
+# --------- SHARED FETCHCONTENTS -----------------------------
+FetchContent_Declare(
+    enet
+    GIT_REPOSITORY "https://github.com/zpl-c/enet.git"
+    GIT_TAG 8647b6eaea881c86471ae29f732620d299fc20d7
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(enet)
+
+add_library(ENetStatic INTERFACE)
+
+target_include_directories(ENetStatic INTERFACE
+    ${enet_SOURCE_DIR}/include
+)
+# ------------------------------------------------------------
+
+# --------- CLIENT FETCHCONTENTS -----------------------------
 if(WIN32 AND DPLMP_BUILD_CLIENT)
 
 if(DPLMP_USE_SAFETYHOOK)
@@ -87,22 +105,8 @@ target_include_directories(xxHashStatic PUBLIC
     ${xxhash_SOURCE_DIR}
 )
 
-FetchContent_Declare(
-    enet
-    GIT_REPOSITORY "https://github.com/zpl-c/enet.git"
-    GIT_TAG 8647b6eaea881c86471ae29f732620d299fc20d7
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-)
-FetchContent_MakeAvailable(enet)
-
-add_library(ENetStatic INTERFACE)
-
-target_include_directories(ENetStatic INTERFACE
-    ${enet_SOURCE_DIR}/include
-)
-
 endif()
+# ------------------------------------------------------------
 
 add_subdirectory(Shared)
 
