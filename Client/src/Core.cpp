@@ -472,11 +472,6 @@ namespace Core {
 
 	void Initialize() {
 		WaitForSteamUnpack();
-
-		// I hope we don't deadlock!
-		HANDLE hMainThread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, GetMainThreadId());
-		SuspendThread(hMainThread);
-
 		printf("EXE unpacked, hooking.\n");
 		ParseCommandLine();
 
@@ -596,7 +591,5 @@ namespace Core {
 		// To truly fix this, we would have to heap allocate the pool (or allocate it in this dll space), and hook CCharacterManager::GetFreeCharacter and whatever else uses the pool. Which would take work.
 		//char pplAmount = 48;
 		//WriteToMemory((DWORD)0x4f764e, &pplAmount, 1);
-
-		ResumeThread(hMainThread);
 	}
 }
