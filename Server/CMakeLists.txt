@@ -14,15 +14,22 @@ target_include_directories(Server
 
 target_link_libraries(Server
     PRIVATE
-        ENetStatic
+        enet_static
         Shared
 )
 
 if (WIN32)
     target_compile_definitions(Server PRIVATE PLATFORM_WINDOWS)
+    target_compile_definitions(Shared
+    PRIVATE
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+        PLATFORM_WINDOWS
+    )
     set(CPACK_GENERATOR "ZIP")
 elseif (UNIX)
     target_compile_definitions(Server PRIVATE PLATFORM_LINUX)
+    target_compile_definitions(Shared PRIVATE PLATFORM_LINUX)
     set(CPACK_GENERATOR "TGZ")
 endif()
 

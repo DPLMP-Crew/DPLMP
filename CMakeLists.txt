@@ -24,12 +24,6 @@ FetchContent_Declare(
     GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(enet)
-
-add_library(ENetStatic INTERFACE)
-
-target_include_directories(ENetStatic INTERFACE
-    ${enet_SOURCE_DIR}/include
-)
 # ------------------------------------------------------------
 
 # --------- CLIENT FETCHCONTENTS -----------------------------
@@ -117,7 +111,6 @@ endif()
 if (DPLMP_BUILD_SERVER)
     add_subdirectory(Server)
 endif()
-
 
 set(CPACK_PACKAGE_VENDOR "DPLMP-Crew")
 

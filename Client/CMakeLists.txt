@@ -62,8 +62,15 @@ target_link_libraries(DPLMPClient PRIVATE
     sol2
     xxHashStatic
     d3dcompiler
-    ENetStatic
+    enet_static
     Shared
+)
+
+target_compile_definitions(Shared
+    PRIVATE
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+        PLATFORM_WINDOWS
 )
 
 if (DPLMP_USE_SAFETYHOOK)
